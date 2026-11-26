@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><style id="qw-theme">:root {
+<html><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style id="qw-theme">:root {
   --color-bg: #121218 !important;
   --color-text: #e4e4ed !important;
   --chat-column-base: 720px !important;
@@ -663,17 +664,52 @@ select,input[type=text],input[type=date],input[type=number],input:not([type]),te
 .cover:hover>b,.cover:focus-visible>b,.cover:hover>i,.cover:focus-visible>i{opacity:0}
 .cover .info{background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.9) 30%);padding-top:28px}
 .mini .ic{width:16px;height:16px}.mini .ic .fl svg{width:16px;height:16px}
+
+.track{scroll-padding-left:48px}.cw{flex:none;scroll-snap-align:start}.cw .cover{scroll-snap-align:none}
+.cap{display:none;margin-top:6px;font-size:11px;line-height:1.3;color:var(--page-sub);width:132px}
+.cap .mini{margin:0 0 2px}.cap .dt{opacity:1}
+.book .ico{display:none}.book span{text-transform:uppercase}
+@media (hover:none){.cover:hover{transform:none;box-shadow:none}.cover:hover .info,.cover:focus-visible .info{opacity:0}.cover:hover>b,.cover:hover>i{opacity:1}.book:hover{transform:none}.book.active:hover{transform:translateY(-8px)}}
+body{--tab-on:#B8461F}body[data-theme=dark]{--tab-on:#FF8A5C}
+.mobonly{display:none}
+@media (max-width:700px),(hover:none) and (max-width:900px){
+ .track{scroll-padding-left:16px}
+ .cap{display:block;width:110px}
+ .cw .cover{width:110px;height:165px}
+ header{flex-direction:row;justify-content:center;gap:10px;padding:14px 64px 0 16px}
+ header img{width:44px}header h1{font-size:26px}
+ .toggle{top:12px;right:12px;padding:6px 10px;font-size:12px}
+ main{padding:18px 16px 150px}
+ .bookcase{position:fixed;left:0;right:0;bottom:0;width:auto;max-width:none;margin:0;padding:0;z-index:15;background:var(--page-bg);border-top:1px solid rgba(127,127,127,.35);overflow:visible}
+ .bookcase nav{padding:6px 6px calc(8px + env(safe-area-inset-bottom));gap:0;justify-content:stretch;align-items:stretch}
+ .bookcase .shelf{display:none}
+ .book.b5{display:none}
+ .book{flex:1;width:auto;min-width:0;height:58px;background:transparent!important;border-radius:10px;flex-direction:column;gap:3px;padding:0 2px;box-shadow:none;color:var(--page-sub);transform:none!important;transform-origin:center}
+ .book::after{display:none}
+ .book::before{top:0;left:50%;right:auto;width:0;height:3px;border-radius:0 0 3px 3px;background:var(--tab-on);transform:translateX(-50%);transition:width .2s}
+ .book .ico{display:block;width:26px;height:26px;flex:none}
+ .book span{writing-mode:horizontal-tb;transform:none;font-size:11px;letter-spacing:0;text-transform:none;white-space:nowrap;font-weight:500}
+ .book.active{color:var(--tab-on)}.book.active span{font-weight:700}
+ .book.active::before{width:30px;height:3px;background:var(--tab-on)}
+ .book:focus-visible{outline:2px solid var(--tab-on);outline-offset:-2px}
+ .mobonly{display:block!important}
+ .toast{bottom:120px}
+ dialog{width:min(640px,96vw);max-height:92vh;overflow:auto}
+ .rb .ic,.rb .ic .fl svg{width:36px;height:36px}.rb{padding:3px;min-width:44px;min-height:44px}
+ .btn{min-height:44px}
+ .dq .big{width:96px;height:144px}
+}
 </style>
 </head>
 <body data-theme="light">
 <header><img id="logo" alt="Readers logo"><h1>Readers</h1><button class="toggle" id="tg">Switch to dark</button></header>
 <div class="bookcase"><nav aria-label="Main">
-<button class="book b1 active" data-p="home"><span>HOME</span></button>
-<button class="book b2" data-p="shelf"><span>MY SHELF</span></button>
-<button class="book b3" data-p="discover"><span>DISCOVER</span></button>
-<button class="book b4" data-p="clubs"><span>CLUBS</span></button>
-<button class="book b5" data-p="stats"><span>STATS</span></button>
-<button class="book b6" data-p="profile"><span>PROFILE</span></button>
+<button class="book b1 active" data-p="home"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg><span>Home</span></button>
+<button class="book b2" data-p="shelf"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="4" height="18" rx="1"/><rect x="10" y="6" width="4" height="15" rx="1"/><path d="M16.5 20.5l3.5-14 3 .8"/></svg><span>My Shelf</span></button>
+<button class="book b3" data-p="discover"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Discover</span></button>
+<button class="book b4" data-p="clubs"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.5c3 0 4.8 1.7 4.8 4.5"/></svg><span>Clubs</span></button>
+<button class="book b5" data-p="stats"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg><span>Stats</span></button>
+<button class="book b6" data-p="profile"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/></svg><span>Profile</span></button>
 </nav><div class="shelf"></div></div>
 <main id="main"></main>
 <dialog id="dq" aria-label="Your recommendation queue"></dialog>
@@ -898,7 +934,8 @@ let page='home';
 const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
 function render(){main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+(gate()||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
-function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p));render()}
+const phone=()=>matchMedia('(max-width:700px)').matches;
+function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&p==='stats'&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
 $$('.book').forEach(b=>b.onclick=()=>{
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return go(b.dataset.p);
  $$('.book').forEach(x=>x.classList.remove('active'));b.classList.add('opening');
@@ -907,7 +944,8 @@ function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.cla
 
 /* ---------- shared pieces ---------- */
 function coverBtn(b){const p=progress(b),k=method(b);
- return `<button class="cover" data-act="book" data-id="${esc(b.id)}" ${cvAttrs(b)} style="background:${col(b)}"><i>${esc(b.a)}</i><b>${esc(b.t)}</b>${b.shelf==='reading'?`<div class="prog"><span style="width:${p}%"></span></div>`:''}<div class="info"><strong>${esc(b.t)}</strong>${b.shelf==='reading'?`<span class="dt">${p}% read</span>`:''}${b.rating?`<span class="mini">${iconsRow(k,b.rating)}</span>`:''}${datesHTML(b)}</div></button>`}
+ const cap=b.shelf==='reading'?`<span class="dt">${p}% read</span>`:`${b.rating?`<span class="mini">${iconsRow(k,b.rating)}</span>`:''}<span class="dt">${b.shelf==='finished'?(b.fin?fmtD(b.fin):'Finished'):b.shelf==='dnf'?'Did not finish':b.started?'Started '+fmtD(b.started):''}</span>`;
+ return `<div class="cw"><button class="cover" data-act="book" data-id="${esc(b.id)}" ${cvAttrs(b)} style="background:${col(b)}"><i>${esc(b.a)}</i><b>${esc(b.t)}</b>${b.shelf==='reading'?`<div class="prog"><span style="width:${p}%"></span></div>`:''}<div class="info"><strong>${esc(b.t)}</strong>${b.shelf==='reading'?`<span class="dt">${p}% read</span>`:''}${b.rating?`<span class="mini">${iconsRow(k,b.rating)}</span>`:''}${datesHTML(b)}</div></button><div class="cap">${cap}</div></div>`}
 function rail(name,count,books,extra=''){return `<section class="row"><h3>${esc(name)} <small>${count}</small>${extra}</h3><div class="rail"><button class="arrow l" aria-label="Scroll left" data-act="scroll" data-d="-1">‹</button><div class="track">${books.length?books.map(coverBtn).join(''):'<p class="hint">Nothing here yet.</p>'}</div><button class="arrow r" aria-label="Scroll right" data-act="scroll" data-d="1">›</button></div></section>`}
 const nb=n=>n+(n===1?' book':' books');
 function recCard(r,actions=true){const c=r.c;return `<article class="rc"><div class="cv2" ${cvAttrs(c)} style="background-color:${col(c)}"></div><div><h4>${esc(c.t)}</h4><div class="sub">${esc(c.a)} · ${c.pages} pages</div><div class="why">${r.why}</div><div class="tags">${c.tags.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${actions?`<div class="acts"><button class="btn pri" data-act="rec-want" data-id="${esc(c.id)}">Want to Read</button><button class="btn" data-act="rec-no" data-id="${esc(c.id)}">Not for me</button></div>`:''}</div></article>`}
@@ -951,7 +989,7 @@ function railsHTML(){
  rail('Finished in '+YEAR,nb(fy.length),sorted(fy))+(fin.length>fy.length?rail('Finished earlier or undated',nb(fin.length-fy.length),sorted(fin.filter(b=>!fy.includes(b)))):'')+
  S.custom.map(n=>{const l=S.books.filter(b=>b.custom.includes(n));return rail(n,'Custom shelf · '+nb(l.length),sorted(l))}).join('')+
  rail(SH.dnf,nb(onShelf('dnf').length),sorted(onShelf('dnf')))}
-function vShelf(){return `<div class="inner"><div class="pagehead"><div><h2>My Shelf</h2><p>Your shelves, your rules. Open any book to rate it, move it or add notes.</p></div><div class="hdacts"><label class="sortl">Sort <select id="sortby">${SORTS.map(([k,l])=>`<option value="${k}"${S.sort===k?' selected':''}>${l}</option>`).join('')}</select></label><button class="btn" data-act="newshelf">New shelf</button></div></div></div><div class="search"><input id="q" type="search" placeholder="Search any book by title, author or ISBN" autocomplete="off" aria-label="Search books"><div class="results" id="results"></div></div><div id="rails">${railsHTML()}</div>`}
+function vShelf(){return `<div class="inner"><div class="pagehead"><div><h2>My Shelf</h2><p>Your shelves, your rules. Open any book to rate it, move it or add notes.</p></div><div class="hdacts"><label class="sortl">Sort <select id="sortby">${SORTS.map(([k,l])=>`<option value="${k}"${S.sort===k?' selected':''}>${l}</option>`).join('')}</select></label><button class="btn" data-act="newshelf">New shelf</button></div></div></div><div class="search"><input id="q" type="search" placeholder="Search any book or author" autocomplete="off" aria-label="Search books"><div class="results" id="results"></div></div><div id="rails">${railsHTML()}</div>`}
 function refreshRails(){const r=$('#rails');if(r){r.innerHTML=railsHTML();lazy(r)}}
 const qcache=new Map();let sAbort,sTimer,lastRes=[];
 async function searchBooks(q,signal){if(qcache.has(q))return qcache.get(q);let res=[];
@@ -1086,7 +1124,7 @@ function accountCard(){if(!cloud.on)return '';
  <section class="card sec"><h3 class="ct">Send feedback</h3><div class="fld"><textarea id="fbtext" rows="3" maxlength="2000" placeholder="What is confusing, broken or missing?" aria-label="Feedback" style="width:100%;box-sizing:border-box"></textarea></div><button class="btn pri" data-act="sendfb">Send</button></section>`}
 function vProfile(){const p=S.profile,sh=[...Object.keys(SH),...S.custom.map(c=>'c:'+c)],nm=k=>k.startsWith('c:')?k.slice(2):SH[k];
  const vis=(v,f)=>['public','friends','private'].map(o=>`<option value="${o}"${v===o?' selected':''}>${o[0].toUpperCase()+o.slice(1)}</option>`).join('');
- return `<div class="profhead"><span class="av big">${esc(initials(p.name||'R'))}</span><div><h2 style="text-align:left;margin:0">${esc(p.name)}</h2><p style="margin:2px 0 0;text-align:left">Reading since ${p.since}. ${S.books.length} books in your library${p.imported?`, ${p.imported} imported from Goodreads`:''}.</p></div></div>
+ return `<div class="mobonly" style="margin:0 0 14px"><button class="btn" data-go="stats" style="width:100%">See your reading stats</button></div><div class="profhead"><span class="av big">${esc(initials(p.name||'R'))}</span><div><h2 style="text-align:left;margin:0">${esc(p.name)}</h2><p style="margin:2px 0 0;text-align:left">Reading since ${p.since}. ${S.books.length} books in your library${p.imported?`, ${p.imported} imported from Goodreads`:''}.</p></div></div>
  ${accountCard()}<section class="card sec"><h3 class="ct">Profile</h3><div class="fld"><label>Display name<input data-p="name" value="${esc(p.name)}" maxlength="40"></label></div><div class="fld"><label>Profile visibility<select data-p="vis">${vis(p.vis)}</select></label></div></section>
  <section class="card sec"><h3 class="ct">Shelf privacy</h3>${sh.map(k=>`<div class="prow"><span>${esc(nm(k))}</span><select data-p="priv" data-k="${esc(k)}" aria-label="${esc(nm(k))} visibility">${vis(p.priv[k]||p.vis)}</select></div>`).join('')}</section>
  <section class="card sec"><h3 class="ct">Bring your books</h3><p class="hint" style="margin:0 0 10px">In Goodreads, open My Books, choose Import and export, then Export Library. Drop the CSV here. Books already in your library are skipped.</p><div class="btnrow" style="margin:0"><label class="btn pri filebtn">Import Goodreads CSV<input type="file" accept=".csv,text/csv" data-import="csv" hidden></label></div></section>
