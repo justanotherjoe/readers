@@ -683,6 +683,19 @@ body{--tab-on:#B8461F}body[data-theme=dark]{--tab-on:#FF8A5C}
 #acctmenu .am-i{display:block;width:100%;text-align:left;font:inherit;font-size:15px;padding:10px;border:0;background:transparent;color:inherit;border-radius:8px;cursor:pointer}
 #acctmenu .am-i:hover,#acctmenu .am-i:focus-visible{background:rgba(127,127,127,.15)}
 
+.recs.locked .rl{flex:1 1 320px;min-width:0}
+.recs.locked h3{display:flex;align-items:center;gap:10px}
+.recs.locked .lk{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(127,127,127,.18);flex:none}
+.recs.locked .meter{margin-top:12px;max-width:420px}
+body[data-recs=locked] .book[data-p=discover]{position:relative}
+body[data-recs=locked] .book[data-p=discover] span::after{content:"";display:inline-block;width:11px;height:11px;margin-left:4px;vertical-align:-1px;background:currentColor;opacity:.75;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center/contain no-repeat}
+
+.lane{margin:28px 0 8px}.lanehd h3{font:700 24px Fraunces,Georgia,serif;margin:0 0 2px}.lanehd p{margin:0 0 12px;color:var(--page-sub);text-align:left}
+.lane-stretch .lanehd h3::before,.lane-different .lanehd h3::before,.lane-friends .lanehd h3::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px;vertical-align:2px;background:var(--page-orange)}
+.lane-friends .lanehd h3::before{background:var(--page-green)}
+.frow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(127,127,127,.25);flex-wrap:wrap}.frow .fn{flex:1;min-width:90px;font-weight:600}.frow .fbt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.frow small{color:var(--page-sub)}
+.fsub{font:700 15px Work Sans,sans-serif;margin:16px 0 4px;color:var(--page-sub)}
+
 @media (max-width:700px),(hover:none) and (max-width:900px){
  .track{scroll-padding-left:16px}
  .cap{display:block;width:110px}
@@ -690,11 +703,12 @@ body{--tab-on:#B8461F}body[data-theme=dark]{--tab-on:#FF8A5C}
  header{flex-direction:row;justify-content:center;gap:10px;padding:14px 120px 0 16px}
  header img{width:44px}header h1{font-size:26px}
  #tools{top:10px;right:10px;gap:6px}#tools .toggle{width:34px;height:34px}.acct{height:34px}.acct.in{width:34px}#acctmenu{top:52px;right:10px}
- main{padding:18px 16px 150px}
+ main,main.home,main.wide{padding:18px 16px calc(130px + env(safe-area-inset-bottom))!important}
  .bookcase{position:fixed;left:0;right:0;bottom:0;width:auto;max-width:none;margin:0;padding:0;z-index:15;background:var(--page-bg);border-top:1px solid rgba(127,127,127,.35);overflow:visible}
  .bookcase nav{padding:6px 6px calc(8px + env(safe-area-inset-bottom));gap:0;justify-content:stretch;align-items:stretch}
  .bookcase .shelf{display:none}
  .book.b5{display:none}
+ body[data-freq="1"] .book[data-p=profile]{position:relative}body[data-freq="1"] .book[data-p=profile]::after{content:"";position:absolute;top:8px;right:24%;width:10px;height:10px;border-radius:50%;background:#DB5F33;border:2px solid var(--page-bg)}
  .book{flex:1;width:auto;min-width:0;height:58px;background:transparent!important;border-radius:10px;flex-direction:column;gap:3px;padding:0 2px;box-shadow:none;color:var(--page-sub);transform:none!important;transform-origin:center}
  .book::after{display:none}
  .book::before{top:0;left:50%;right:auto;width:0;height:3px;border-radius:0 0 3px 3px;background:var(--tab-on);transform:translateX(-50%);transition:width .2s}
@@ -736,14 +750,14 @@ const key=(t,a)=>(t+'|'+a).toLowerCase().replace(/\s+/g,' ').trim();
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* ---------- cloud (Supabase). Leave both blank to run in local demo mode ---------- */
 const SB_URL='https://mltikckphcxkbtgmgjvw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdGlrY2twaGN4a2J0Z21nanZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NTY1NzEsImV4cCI6MjExMTIzMjU3MX0.8nwf4Bf881Wv-JTX2--PTR1iqJdt2C7NQEKhdCBNp1M';
-const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],synced:false,ready:false,err:''};
+const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],friends:[],fcode:'',synced:false,ready:false,err:''};
 if(cloud.on)cloud.sb=window.supabase.createClient(SB_URL,SB_KEY);
 let pushT;
 const blank=()=>({v:1,goal:24,custom:[],dismissed:[],books:[],clubs:[],sort:'recent',profile:{name:'Reader',since:new Date().getFullYear(),vis:'friends',priv:{},imported:0}});
 function gate(){if(!cloud.on)return '';
  if(!cloud.ready)return '<div class="inner"><p class="hint" style="text-align:center;padding:40px 0">Loading…</p></div>';
  if(cloud.user)return '';
- const inv=store.get('readers.join','');return `<div class="inner">${inv?'<div class="card" style="max-width:560px;margin:24px auto 0;text-align:center"><b>You have been invited to a book club.</b><p class="hint" style="margin:6px 0 0">Create an account or sign in and you will join automatically.</p></div>':''}<div class="card" style="text-align:center;padding:44px 24px;max-width:560px;margin:24px auto"><h2 style="margin:0 0 10px">Welcome to Readers</h2><p style="margin:0 0 22px">Track what you read, rate it, keep notes, and join chapter by chapter book clubs with friends.</p><div class="btnrow" style="justify-content:center;margin:0"><button class="btn pri" data-act="signup">Create account</button><button class="btn" data-act="signin">Sign in</button></div></div></div>`}
+ const inv=store.get('readers.join',''),fin=store.get('readers.friend','');return `<div class="inner">${inv||fin?`<div class="card" style="max-width:560px;margin:24px auto 0;text-align:center"><b>${inv?'You have been invited to a book club.':'A friend invited you to connect.'}</b><p class="hint" style="margin:6px 0 0">Create an account or sign in and ${inv?'you will join':'the request will be sent'} automatically.</p></div>`:''}<div class="card" style="text-align:center;padding:44px 24px;max-width:560px;margin:24px auto"><h2 style="margin:0 0 10px">Welcome to Readers</h2><p style="margin:0 0 22px">Track what you read, rate it, keep notes, and join chapter by chapter book clubs with friends.</p><div class="btnrow" style="justify-content:center;margin:0"><button class="btn pri" data-act="signup">Create account</button><button class="btn" data-act="signin">Sign in</button></div></div></div>`}
 const fail=e=>toast((e&&e.message)||'Something went wrong');
 const db={
  async getData(){const{data,error}=await cloud.sb.from('user_data').select('data').eq('user_id',cloud.user.id).maybeSingle();if(error)throw error;return data&&data.data},
@@ -755,7 +769,13 @@ const db={
   const{error}=await cloud.sb.from('club_members').delete().eq('club_id',c.id).eq('user_id',cloud.user.id);if(error)throw error},
  async post(p){const{data,error}=await cloud.sb.from('club_posts').insert(p).select().single();if(error)throw error;return data},
  async progress(id,ch,name){const{error}=await cloud.sb.from('club_members').update({ch,name}).eq('club_id',id).eq('user_id',cloud.user.id);if(error)throw error},
- async feedback(text){const{error}=await cloud.sb.from('feedback').insert({text,page});if(error)throw error}
+ async feedback(text){const{error}=await cloud.sb.from('feedback').insert({text,page});if(error)throw error},
+ async putProfile(name,shared){const{error}=await cloud.sb.from('profiles').upsert({user_id:cloud.user.id,name,shared,updated_at:new Date().toISOString()});if(error)throw error},
+ async myCode(){const{data,error}=await cloud.sb.from('profiles').select('code').eq('user_id',cloud.user.id).maybeSingle();if(error)throw error;return data&&data.code},
+ async friends(){const{data,error}=await cloud.sb.rpc('my_friends');if(error)throw error;return data||[]},
+ async reqFriend(code){const{data,error}=await cloud.sb.rpc('request_friend',{p_code:code});if(error)throw error;return data},
+ async respond(id,acc){const{error}=await cloud.sb.rpc('respond_friend',{p_id:id,p_accept:acc});if(error)throw error},
+ async unfriend(id){const{error}=await cloud.sb.rpc('remove_friend',{p_id:id});if(error)throw error}
 };
 const cloudSoon=()=>{if(!cloud.user||!cloud.synced)return;clearTimeout(pushT);pushT=setTimeout(cloudFlush,1500)};
 const CLS=()=>cloud.user?cloud.clubs:S.clubs;
@@ -795,8 +815,55 @@ const CAT=[
 ['The Hobbit','J. R. R. Tolkien',['Adventurous','Cozy','Fantasy'],310],
 ['Wild','Cheryl Strayed',['Memoir','Emotional','Hopeful','Adventurous'],315],
 ['Recursion','Blake Crouch',['Science fiction','Fast paced','Mysterious'],329],
-['The Hitchhiker\'s Guide to the Galaxy','Douglas Adams',['Funny','Science fiction','Adventurous'],224]
+['The Hitchhiker\'s Guide to the Galaxy','Douglas Adams',['Funny','Science fiction','Adventurous'],224],
+['The Thursday Murder Club','Richard Osman',['Mystery','Funny','Cozy'],382],
+['And Then There Were None','Agatha Christie',['Mystery','Dark','Mysterious'],272],
+['Gone Girl','Gillian Flynn',['Thriller','Dark','Mysterious'],422],
+['The Girl with the Dragon Tattoo','Stieg Larsson',['Mystery','Dark','Fast paced'],465],
+['In the Woods','Tana French',['Mystery','Atmospheric','Dark'],429],
+['The Silent Patient','Alex Michaelides',['Thriller','Mysterious','Fast paced'],336],
+['Big Little Lies','Liane Moriarty',['Mystery','Funny','Emotional'],460],
+['The Shining','Stephen King',['Horror','Dark','Atmospheric'],447],
+['Mexican Gothic','Silvia Moreno-Garcia',['Horror','Atmospheric','Mysterious'],301],
+['The Haunting of Hill House','Shirley Jackson',['Horror','Atmospheric','Dark'],246],
+['Pet Sematary','Stephen King',['Horror','Dark','Emotional'],374],
+['The Name of the Wind','Patrick Rothfuss',['Fantasy','Epic','Adventurous'],662],
+['The Hobbit','J.R.R. Tolkien',['Fantasy','Adventurous','Cozy'],310],
+['Circe','Madeline Miller',['Fantasy','Reflective','Atmospheric'],393],
+['The Fifth Season','N.K. Jemisin',['Fantasy','Epic','Dark'],468],
+['Mistborn: The Final Empire','Brandon Sanderson',['Fantasy','Epic','Adventurous'],541],
+['Good Omens','Terry Pratchett and Neil Gaiman',['Fantasy','Funny','Adventurous'],400],
+['Project Hail Mary','Andy Weir',['Science fiction','Funny','Hopeful'],476],
+['The Martian','Andy Weir',['Science fiction','Funny','Adventurous'],369],
+['Ender\'s Game','Orson Scott Card',['Science fiction','Fast paced','Emotional'],324],
+['Station Eleven','Emily St. John Mandel',['Science fiction','Atmospheric','Hopeful'],333],
+['The Left Hand of Darkness','Ursula K. Le Guin',['Science fiction','Reflective','Slow paced'],304],
+['All the Light We Cannot See','Anthony Doerr',['Historical','Emotional','Atmospheric'],531],
+['The Book Thief','Markus Zusak',['Historical','Emotional','Hopeful'],552],
+['Pachinko','Min Jin Lee',['Historical','Emotional','Reflective'],490],
+['The Nightingale','Kristin Hannah',['Historical','Emotional','Heartwarming'],440],
+['Wolf Hall','Hilary Mantel',['Historical','Literary','Slow paced'],604],
+['Educated','Tara Westover',['Memoir','Emotional','Hopeful'],334],
+['Born a Crime','Trevor Noah',['Memoir','Funny','Hopeful'],304],
+['When Breath Becomes Air','Paul Kalanithi',['Memoir','Reflective','Emotional'],228],
+['Into the Wild','Jon Krakauer',['Memoir','Adventurous','Reflective'],207],
+['Bossypants','Tina Fey',['Memoir','Funny','Cozy'],275],
+['Sapiens','Yuval Noah Harari',['Informative','Historical','Reflective'],443],
+['Atomic Habits','James Clear',['Informative','Hopeful','Fast paced'],320],
+['A Short History of Nearly Everything','Bill Bryson',['Informative','Funny','Adventurous'],544],
+['The Immortal Life of Henrietta Lacks','Rebecca Skloot',['Informative','Emotional','Historical'],381],
+['Braiding Sweetgrass','Robin Wall Kimmerer',['Informative','Reflective','Hopeful'],391],
+['Normal People','Sally Rooney',['Literary','Emotional','Reflective'],266],
+['Tomorrow, and Tomorrow, and Tomorrow','Gabrielle Zevin',['Literary','Emotional','Hopeful'],416],
+['Where the Crawdads Sing','Delia Owens',['Literary','Atmospheric','Mysterious'],368],
+['The Midnight Library','Matt Haig',['Literary','Hopeful','Reflective'],288],
+['Remarkably Bright Creatures','Shelby Van Pelt',['Literary','Heartwarming','Cozy'],368],
+['The Seven Husbands of Evelyn Hugo','Taylor Jenkins Reid',['Romance','Emotional','Historical'],389],
+['The Kiss Quotient','Helen Hoang',['Romance','Heartwarming','Funny'],320],
+['Pride and Prejudice','Jane Austen',['Romance','Funny','Cozy'],279],
+['The Da Vinci Code','Dan Brown',['Thriller','Fast paced','Mysterious'],454]
 ].map(([t,a,tags,pages])=>({id:key(t,a),t,a,tags,pages}));
+{const s=new Set();for(let i=CAT.length-1;i>=0;i--){if(s.has(CAT[i].id))CAT.splice(i,1);else s.add(CAT[i].id)}}
 const CATID=Object.fromEntries(CAT.map(c=>[c.id,c]));
 
 /* ---------- data store: one source of truth, saved to localStorage ---------- */
@@ -881,7 +948,7 @@ function seed(){
 }
 let S=store.get('readers.v1',null);
 if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
-function normalize(){S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
+function normalize(){S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
 let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>store.set('readers.v1',S),150);cloudSoon()};
@@ -927,6 +994,7 @@ function recommend(mood){
  const w={},au={};
  S.books.forEach(b=>{const s=b.shelf==='finished'?(b.rating!=null?b.rating-3:.5):b.shelf==='dnf'?-1.5:b.shelf==='reading'?.5:.25;
   b.tags.forEach(t=>w[t]=(w[t]||0)+s);au[b.a]=(au[b.a]||0)+s});
+ Object.keys(S.liked).forEach(t=>w[t]=(w[t]||0)+.6*S.liked[t]);Object.keys(S.nope).forEach(t=>w[t]=(w[t]||0)-.8*S.nope[t]);
  const seen=new Set(S.books.map(b=>b.id).concat(S.dismissed));
  const src=S.books.filter(b=>(b.shelf==='finished'&&b.rating>=3.5)||b.shelf==='reading');
  return CAT.filter(c=>!seen.has(c.id)&&(!mood||c.tags.includes(mood))).map(c=>{
@@ -934,6 +1002,46 @@ function recommend(mood){
   let best=null,bv=-1,shared=[];
   src.forEach(b=>{const sh=b.tags.filter(t=>c.tags.includes(t));const v=sh.length*(b.rating!=null?b.rating-3:.5)+(b.a===c.a?5:0);if(v>bv){bv=v;best=b;shared=sh}});
   return{c,sc,why:why(c,best,shared)}}).sort((x,y)=>y.sc-x.sc)}
+
+/* ---------- lanes: close matches, friends, stretch picks, something different ---------- */
+const GENRES=new Set(['Romance','Fantasy','Science fiction','Memoir','Academic','Thriller','Informative','Literary','Historical','Mystery','Horror']);
+const gOf=c=>c.tags.filter(t=>GENRES.has(t)),mOf=c=>c.tags.filter(t=>!GENRES.has(t));
+function taste(){const g={},m={},tried=new Set();
+ S.books.forEach(b=>{const s=b.shelf==='finished'?(b.rating!=null?b.rating-3:.5):b.shelf==='dnf'?-1.5:b.shelf==='reading'?.5:.25;
+  b.tags.forEach(t=>{const o=GENRES.has(t)?g:m;o[t]=(o[t]||0)+s;if(GENRES.has(t))tried.add(t)})});
+ Object.keys(S.liked).forEach(t=>{const o=GENRES.has(t)?g:m;o[t]=(o[t]||0)+.6*S.liked[t]});
+ Object.keys(S.nope).forEach(t=>{const o=GENRES.has(t)?g:m;o[t]=(o[t]||0)-.8*S.nope[t]});
+ return{g,m,tried}}
+function lanes(mood){
+ const{g,m,tried}=taste(),seen=new Set(S.books.map(b=>b.id).concat(S.dismissed)),used=new Set(),out=[];
+ const bad=c=>c.tags.some(t=>(S.nope[t]||0)>=2);
+ const take=(arr,n)=>{const r=arr.slice(0,n);r.forEach(x=>used.add(x.c.id));return r};
+ const diverse=(arr,n,per)=>{const cnt={},r=[];for(const x of arr){const k=gOf(x.c)[0]||'x';if((cnt[k]||0)>=per)continue;cnt[k]=(cnt[k]||0)+1;r.push(x);if(r.length>=n)break}return r};
+ const pool=CAT.filter(c=>!seen.has(c.id)&&(!mood||c.tags.includes(mood)));
+ const fav=S.books.filter(b=>b.shelf==='finished'&&b.rating>=4).sort((a,b)=>b.rating-a.rating)[0];
+ const anchor=mo=>S.books.filter(b=>b.shelf==='finished'&&b.rating>=3.5&&b.tags.includes(mo)).sort((a,b)=>b.rating-a.rating)[0];
+ const L1=take(recommend(mood).filter(r=>gOf(r.c).some(t=>g[t]>0)&&r.sc>0),6);
+ if(L1.length)out.push({k:'close',title:fav?'Because you loved '+fav.t:'More of what you love',sub:'The closest matches to the books you rated highly.',items:L1});
+ const fr=cloud.user?(cloud.friends||[]).filter(f=>f.status==='accepted'):[],fm={};
+ fr.forEach(f=>(f.shared||[]).forEach(x=>{if(!(x.r>=4))return;const id=key(x.t,x.a);if(seen.has(id)||used.has(id))return;(fm[id]=fm[id]||{x,by:[]}).by.push({n:f.name,r:x.r})}));
+ const FI=Object.keys(fm).filter(id=>!mood||(fm[id].x.tg||[]).includes(mood)).map(id=>{const v=fm[id],c=CATID[id]||{id,t:v.x.t,a:v.x.a,tags:v.x.tg||[],pages:v.x.p||0};CATID[id]=c;
+  const n=v.by.map(b=>'<b>'+esc(b.n)+'</b>'),avg=v.by.reduce((a,b)=>a+b.r,0)/v.by.length;
+  const why=v.by.length===1?`${n[0]} rated this ${v.by[0].r} out of 5.`:v.by.length===2?`${n[0]} and ${n[1]} both rated this highly.`:`${n[0]}, ${n[1]} and ${v.by.length-2} more friend${v.by.length>3?'s':''} rated this highly.`;
+  return{c,sc:v.by.length*10+avg,why}}).sort((a,b)=>b.sc-a.sc);
+ if(FI.length)out.push({k:'friends',title:'Friends loved these',sub:'Books your friends rated 4 stars or more that are not on your shelves yet.',items:take(FI,6)});
+ const st=pool.filter(c=>!used.has(c.id)&&!bad(c)).map(c=>{const cg=gOf(c);if(!cg.length||cg.some(t=>g[t]>0))return null;const sh=mOf(c).filter(t=>m[t]>0);if(!sh.length)return null;
+  const mo=sh.sort((a,b)=>m[b]-m[a])[0],b=anchor(mo);
+  return{c,sc:sh.reduce((a,t)=>a+m[t],0),why:`New genre, familiar feel. You enjoy <b>${esc(mo.toLowerCase())}</b> reads${b?', like <b>'+esc(b.t)+'</b>':''}, and this one is ${esc(cg[0].toLowerCase())}.`}}).filter(Boolean).sort((x,y)=>y.sc-x.sc);
+ const L2=take(diverse(st,4,1),4);
+ if(L2.length)out.push({k:'stretch',title:'Stretch picks',sub:'A new genre with a feel you already love, so it is an easy step outside your usual.',items:L2});
+ const day=Math.floor(Date.now()/864e5),hs=s=>[...s].reduce((a,ch)=>(a*31+ch.charCodeAt(0))>>>0,7);
+ const df=pool.filter(c=>!used.has(c.id)&&!bad(c)).filter(c=>{const cg=gOf(c);return cg.length&&cg.every(t=>!tried.has(t))}).map(c=>({c,sc:(hs(c.id)+day)%1000,
+  why:`A genre you have not tried yet: <b>${esc(gOf(c)[0].toLowerCase())}</b>. ${c.pages<=320?'At '+c.pages+' pages it is an easy first step.':'A good place to start exploring it.'}`})).map(x=>({...x,sc:x.sc+(L2.some(y=>gOf(y.c).includes(gOf(x.c)[0]))?0:1000)})).sort((x,y)=>y.sc-x.sc);
+ const L3=take(diverse(df,5,1),5);
+ if(L3.length)out.push({k:'different',title:'Something different',sub:'Genres you have not tried yet. Low pressure, one book each.',items:L3});
+ return out}
+function topPicks(){const ls=lanes(),r=[];for(let i=0;i<3&&r.length<6;i++)ls.forEach(l=>{if(l.items[i]&&r.length<6)r.push(l.items[i])});
+ if(r.length<6){const ids=new Set(r.map(x=>x.c.id));recommend().forEach(x=>{if(r.length<6&&!ids.has(x.c.id))r.push(x)})}return r}
 function why(c,b,sh){
  if(!b||(!sh.length&&b.a!==c.a))return `Popular with readers who like <b>${esc(c.tags[0].toLowerCase())}</b> stories.`;
  const rated=b.rating!=null;
@@ -944,7 +1052,7 @@ const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('
 let page='home';
 const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
-function render(){renderAcct();main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+(gate()||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
+function render(){renderAcct();document.body.dataset.freq=(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+(gate()||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
 const phone=()=>matchMedia('(max-width:700px)').matches;
 function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&p==='stats'&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
 $$('.book').forEach(b=>b.onclick=()=>{
@@ -971,9 +1079,10 @@ function vHome(){
    :`<div class="chap">${progress(r)}% read</div><div class="bar" style="max-width:420px;margin:12px 0"><i style="width:${progress(r)}%;background:var(--page-orange);display:block;height:100%"></i></div>`)+
   `<div class="btnrow">${n&&c<n?`<button class="btn pri" data-act="nextch" data-id="${esc(r.id)}">Finished this chapter</button>`:`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`}<button class="btn" data-act="note" data-id="${esc(r.id)}">Add a note</button><button class="btn" data-act="book" data-id="${esc(r.id)}">Details</button></div>${rd.length>1?`<p class="also">Also reading: ${rd.filter(x=>x!==r).map(x=>`<button class="lnk" data-act="book" data-id="${esc(x.id)}">${esc(x.t)} (${progress(x)}%)</button>`).join(', ')}</p>`:''}</div></section>`}
  else hero=`<section class="card"><h3 style="margin:0 0 6px;font:700 22px Fraunces,Georgia,serif">Nothing in progress</h3><p style="margin:0 0 14px">Pick something from Want to Read and start a new chapter.</p><button class="btn pri" data-go="shelf">Open My Shelf</button></section>`;
- const fy=finYear().length,done=onShelf('finished').length,recs=recommend();
+ const fy=finYear().length,done=onShelf('finished').length,recs=topPicks();
  const goal=`<section class="goalbar"><div><b>${fy} of ${S.goal}</b> books finished in ${YEAR}</div><div class="bar"><i style="width:${Math.min(100,fy/S.goal*100)}%;background:var(--page-green);display:block;height:100%"></i></div><button class="lnk" data-go="stats">See stats</button></section>`;
- const rc=done<GOAL_UNLOCK?`<section class="recs"><div><h3>Recommendations unlock at ${GOAL_UNLOCK} books</h3><p>You have finished ${done}. Import your history from Goodreads to unlock them now.</p></div><button class="btn pri" data-go="profile">Import books</button></section>`
+ const LOCK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+ const rc=done<GOAL_UNLOCK?`<section class="recs locked"><div class="rl"><h3><span class="lk">${LOCK}</span>Recommendations unlock at ${GOAL_UNLOCK} books</h3><p>Readers learns your taste from the books you finish and rate. ${GOAL_UNLOCK-done===1?'Just 1 more to go.':(GOAL_UNLOCK-done)+' more to go.'} Nothing here is sponsored.</p>${meter(done,GOAL_UNLOCK).replace('books logged','finished books')}</div><div class="btnrow" style="margin:0"><button class="btn pri" data-go="shelf">Add books</button><button class="btn" data-go="profile">Import from Goodreads</button></div></section>`
  :`<section class="recs"><div><h3>Your recommendations are ready</h3><p>${Math.min(6,recs.length)} books picked from the ${done} you have finished. Go through them one at a time.</p></div><div style="display:flex;align-items:center;gap:18px"><div class="stack">${recs.slice(0,4).map(x=>`<div ${cvAttrs(x.c)}></div>`).join('')}</div><button class="btn pri" data-act="openq">See recommendations</button></div></section>`;
  return hero+goal+rc}
 let QR=[],qi=0;
@@ -1057,10 +1166,10 @@ function openForm(title,fields,submit,cta='Save'){
 let dm='';
 function vDiscover(){const done=onShelf('finished').length;
  if(done<GOAL_UNLOCK)return `<div class="inner"><div class="pagehead"><div><h2>Suggestions unlock at ${GOAL_UNLOCK} books</h2><p>Log ${GOAL_UNLOCK-done} more finished books and Readers will start suggesting what to read next. No ads, no buy buttons.</p></div></div>${meter(done,GOAL_UNLOCK)}<div class="btnrow"><button class="btn pri" data-go="profile">Import from Goodreads</button><button class="btn" data-go="shelf">Add books on My Shelf</button></div></div>`;
- const recs=recommend(dm);
- return `<div class="inner"><div class="pagehead"><div><h2>Picked for you</h2><p>Ranked by how closely each book matches what you rated highly. Nothing here is sponsored.</p></div></div>
+ const ls=lanes(dm);
+ return `<div class="inner"><div class="pagehead"><div><h2>Picked for you</h2><p>Some picks match your taste, and some are here to take you somewhere new. Nothing is sponsored.</p></div></div>
  <div class="chips" role="group" aria-label="Filter by mood"><button class="chip" aria-pressed="${!dm}" data-act="mood" data-m="">All moods</button>${MOODS.map(m=>`<button class="chip" aria-pressed="${dm===m}" data-act="mood" data-m="${m}">${m}</button>`).join('')}</div>
- ${recs.length?`<div class="rcs">${recs.slice(0,12).map(x=>recCard(x)).join('')}</div>`:`<div class="card"><p style="margin:0">No more ${dm?esc(dm.toLowerCase())+' ':''}suggestions right now. Try another mood or finish a few more books.</p></div>`}</div>`}
+ ${ls.length?ls.map(l=>`<section class="lane lane-${l.k}"><div class="lanehd"><h3>${esc(l.title)}</h3><p>${esc(l.sub)}</p></div><div class="rcs">${l.items.map(x=>recCard(x)).join('')}</div></section>`).join(''):`<div class="card"><p style="margin:0">No more ${dm?esc(dm.toLowerCase())+' ':''}suggestions right now. Try another mood or finish a few more books.</p></div>`}</div>`}
 
 /* ---------- CLUBS ---------- */
 let cid=null,cch=null;
@@ -1133,10 +1242,20 @@ function accountCard(){if(!cloud.on)return '';
  if(!cloud.user)return `<section class="card sec"><h3 class="ct">Account</h3><p class="hint" style="margin:0 0 10px">You are using demo data stored on this device. Create an account to save your shelves online and join real book clubs.</p><div class="btnrow" style="margin:0"><button class="btn pri" data-act="signup">Create account</button><button class="btn" data-act="signin">Sign in</button></div></section>`;
  return `<section class="card sec"><h3 class="ct">Account</h3><p class="hint" style="margin:0 0 10px">Signed in as ${esc(cloud.user.email)}. Your shelves, ratings, notes and clubs are saved to your account.${cloud.err?' <b>Sync problem: '+esc(cloud.err)+'</b>':''}</p><div class="btnrow" style="margin:0"><button class="btn" data-act="signout">Sign out</button></div></section>
  <section class="card sec"><h3 class="ct">Send feedback</h3><div class="fld"><textarea id="fbtext" rows="3" maxlength="2000" placeholder="What is confusing, broken or missing?" aria-label="Feedback" style="width:100%;box-sizing:border-box"></textarea></div><button class="btn pri" data-act="sendfb">Send</button></section>`}
+
+function friendsCard(){if(!cloud.user)return '';const fr=cloud.friends||[];
+ const inc=fr.filter(f=>f.status==='pending'&&f.incoming),out=fr.filter(f=>f.status==='pending'&&!f.incoming),ok=fr.filter(f=>f.status==='accepted');
+ const row=(f,btns)=>`<div class="frow"><span class="av">${esc(initials(f.name||'R'))}</span><span class="fn">${esc(f.name)}</span>${btns}</div>`;
+ return `<section class="card sec"><h3 class="ct">Friends</h3><p class="hint" style="margin:0 0 10px">Connect with friends and the books they loved show up in Discover. Friends only see the titles and ratings of finished books, and only if your Shelf privacy allows it.</p>
+ ${cloud.fcode?`<p class="by" style="margin:0 0 10px">Your friend code <b class="code">${esc(cloud.fcode)}</b> <button class="btn" data-act="copyf">Copy</button> <button class="btn pri" data-act="sharef">Share link</button></p>`:''}
+ <form class="composer" data-form="addfriend"><input name="code" required maxlength="12" autocomplete="off" autocapitalize="none" placeholder="Enter a friend's code" aria-label="Friend code"><button class="btn" type="submit">Add friend</button></form>
+ ${inc.length?'<h4 class="fsub">Requests</h4>'+inc.map(f=>row(f,`<span class="fbt"><button class="btn pri" data-act="facc" data-id="${esc(f.id)}">Accept</button><button class="btn" data-act="fdec" data-id="${esc(f.id)}">Decline</button></span>`)).join(''):''}
+ ${out.length?'<h4 class="fsub">Waiting for a reply</h4>'+out.map(f=>row(f,`<span class="fbt"><button class="btn" data-act="frem" data-id="${esc(f.id)}">Cancel</button></span>`)).join(''):''}
+ <h4 class="fsub">Your friends <small>${ok.length}</small></h4>${ok.length?ok.map(f=>row(f,`<span class="fbt"><small>${(f.shared||[]).length} shared</small><button class="btn" data-act="frem" data-id="${esc(f.id)}">Remove</button></span>`)).join(''):'<p class="hint" style="margin:0">No friends yet. Share your link or enter a friend\'s code.</p>'}</section>`}
 function vProfile(){const p=S.profile,sh=[...Object.keys(SH),...S.custom.map(c=>'c:'+c)],nm=k=>k.startsWith('c:')?k.slice(2):SH[k];
  const vis=(v,f)=>['public','friends','private'].map(o=>`<option value="${o}"${v===o?' selected':''}>${o[0].toUpperCase()+o.slice(1)}</option>`).join('');
  return `<div class="mobonly" style="margin:0 0 14px"><button class="btn" data-go="stats" style="width:100%">See your reading stats</button></div><div class="profhead"><span class="av big">${esc(initials(p.name||'R'))}</span><div><h2 style="text-align:left;margin:0">${esc(p.name)}</h2><p style="margin:2px 0 0;text-align:left">Reading since ${p.since}. ${S.books.length} books in your library${p.imported?`, ${p.imported} imported from Goodreads`:''}.</p></div></div>
- ${accountCard()}<section class="card sec"><h3 class="ct">Profile</h3><div class="fld"><label>Display name<input data-p="name" value="${esc(p.name)}" maxlength="40"></label></div><div class="fld"><label>Profile visibility<select data-p="vis">${vis(p.vis)}</select></label></div></section>
+ ${accountCard()}${friendsCard()}<section class="card sec"><h3 class="ct">Profile</h3><div class="fld"><label>Display name<input data-p="name" value="${esc(p.name)}" maxlength="40"></label></div><div class="fld"><label>Profile visibility<select data-p="vis">${vis(p.vis)}</select></label></div></section>
  <section class="card sec"><h3 class="ct">Shelf privacy</h3>${sh.map(k=>`<div class="prow"><span>${esc(nm(k))}</span><select data-p="priv" data-k="${esc(k)}" aria-label="${esc(nm(k))} visibility">${vis(p.priv[k]||p.vis)}</select></div>`).join('')}</section>
  <section class="card sec"><h3 class="ct">Bring your books</h3><p class="hint" style="margin:0 0 10px">In Goodreads, open My Books, choose Import and export, then Export Library. Drop the CSV here. Books already in your library are skipped.</p><div class="btnrow" style="margin:0"><label class="btn pri filebtn">Import Goodreads CSV<input type="file" accept=".csv,text/csv" data-import="csv" hidden></label></div></section>
  <section class="card sec"><h3 class="ct">Your data</h3><p class="hint" style="margin:0 0 10px">${cloud.on?'Your library is saved to your account. You can also export a backup any time.':'Everything is stored on this device. Export a backup any time.'}</p><div class="btnrow" style="margin:0"><button class="btn" data-act="export">Export backup</button><label class="btn filebtn">Restore backup<input type="file" accept=".json,application/json" data-import="json" hidden></label><button class="btn" data-act="clearcovers">Refresh covers</button>${cloud.on?'<button class="btn" data-act="sample">Add sample books</button>':'<button class="btn danger" data-act="reset">Reset demo data</button>'}</div></section>`}
@@ -1180,13 +1299,18 @@ document.addEventListener('click',e=>{
  else if(a==='scroll'){const t=el.closest('.rail').querySelector('.track');t.scrollBy({left:t.clientWidth*.8*(+el.dataset.d)})}
  else if(a==='nextch'&&b){if(b.cur<b.chapters.length){b.cur++;save();toast('Now on chapter '+Math.min(b.cur+1,b.chapters.length));render()}}
  else if(a==='finish'&&b){setShelf(b,'finished');render();openBook(id);toast('Marked as finished. Add a rating.')}
- else if(a==='openq'){QR=recommend().slice(0,6);qi=0;renderQ();dq.showModal()}
+ else if(a==='openq'){QR=topPicks();qi=0;renderQ();dq.showModal()}
  else if(a==='remove'){S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed')}
  else if(a==='newshelf')openForm('New shelf','<div class="fld"><label>Shelf name<input name="name" required maxlength="30" placeholder="Beach reads"></label></div>',fd=>{const n=fd.get('name').trim();if(n&&!S.custom.includes(n)&&!Object.values(SH).includes(n)){S.custom.push(n);save();refreshRails();toast('Created '+n)}},'Create shelf');
  else if(a==='sadd')searchAdd(el);
  else if(a==='mood'){dm=el.dataset.m;render()}
- else if(a==='rec-want'){addBook(CATID[id],'want');toast('Added '+CATID[id].t+' to Want to Read');render()}
- else if(a==='rec-no'){S.dismissed.push(id);save();render()}
+ else if(a==='rec-want'){const c=CATID[id];addBook(c,'want');(c.tags||[]).forEach(t=>S.liked[t]=(S.liked[t]||0)+1);save();toast('Added '+c.t+' to Want to Read');render()}
+ else if(a==='rec-no'){const c=CATID[id];S.dismissed.push(id);if(c)c.tags.forEach(t=>S.nope[t]=(S.nope[t]||0)+1);save();toast('Got it. You will see fewer picks like that.');render()}
+ else if(a==='copyf'){try{navigator.clipboard.writeText(cloud.fcode);toast('Friend code copied')}catch(x){toast('Code: '+cloud.fcode)}}
+ else if(a==='sharef')shareFriend();
+ else if(a==='facc')db.respond(id,true).then(async()=>{await loadFriends();toast('You are now friends');render()}).catch(fail);
+ else if(a==='fdec')db.respond(id,false).then(async()=>{await loadFriends();render()}).catch(fail);
+ else if(a==='frem'){db.unfriend(id).then(async()=>{await loadFriends();render()}).catch(fail)}
  else if(a==='club'){cid=id;cch=null;render()}
  else if(a==='clubnext')clubNext(id);
  else if(a==='newclub')newClub();
@@ -1212,7 +1336,8 @@ document.addEventListener('change',e=>{const t=e.target;
   rd.onload=()=>{if(t.dataset.import==='csv')importGR(String(rd.result));
    else try{const j=JSON.parse(rd.result);if(!Array.isArray(j.books))throw 0;S=j;normalize();save();toast('Backup restored');render()}catch(x){toast('That backup could not be read')}};
   rd.readAsText(f)}});
-document.addEventListener('submit',e=>{const f=e.target.closest('[data-form="post"]');if(!f)return;e.preventDefault();
+document.addEventListener('submit',e=>{const af=e.target.closest('[data-form="addfriend"]');if(af){e.preventDefault();const code=new FormData(af).get('code').trim();if(code)sendFriend(code);return}
+ const f=e.target.closest('[data-form="post"]');if(!f)return;e.preventDefault();
  const cl=CLS().find(c=>c.id===cid),txt=new FormData(f).get('text').trim();if(!txt||!cl)return;
  if(cloud.user){db.post({club_id:cl.id,name:S.profile.name,ch:cch,text:txt}).then(r=>{cl.posts.push({id:r.id,ch:r.ch,who:r.name,uid:r.user_id,text:r.text,ts:r.created_at});render()}).catch(fail);return}
  cl.posts.push({id:'p'+Date.now(),ch:cch,who:'You',text:txt,ts:new Date().toISOString()});save();render()});
@@ -1229,16 +1354,16 @@ async function authSubmit(mode,email,pw,name){const a=cloud.sb.auth;
  if(mode==='up'){const{data,error}=await a.signUp({email,password:pw,options:{data:{name}}});if(error)throw error;if(!data.session)return 'confirm'}
  else{const{error}=await a.signInWithPassword({email,password:pw});if(error)throw error}}
 async function onSession(sess){
- if(!sess){cloud.user=null;cloud.clubs=[];cloud.synced=false;S=cloud.on?blank():seed();normalize();store.set('readers.v1',S);cid=null;render();return}
+ if(!sess){cloud.user=null;cloud.clubs=[];cloud.friends=[];cloud.fcode='';profSig='';cloud.synced=false;S=cloud.on?blank():seed();normalize();store.set('readers.v1',S);cid=null;render();return}
  if(cloud.user&&cloud.user.id===sess.user.id)return;
  cloud.ready=true;cloud.user=sess.user;cloud.synced=false;
  try{const d=await db.getData(),md=sess.user.user_metadata||{};
   if(d&&Array.isArray(d.books))S=d;else {S=blank();S.profile.name=md.name||(sess.user.email||'Reader').split('@')[0]}
   S.clubs=[];normalize();store.set('readers.v1',S);
   if(!d)await db.putData(S);
-  cloud.synced=true;await loadClubs();cloudSoon()}
+  cloud.synced=true;await loadClubs();try{await syncProfile()}catch(x){}await loadFriends();cloudSoon()}
  catch(e){cloud.err=(e&&e.message)||'Could not load your account';toast('Could not load your account: '+cloud.err)}
- render();runPendingJoin()}
+ render();await runPendingJoin();await runPendingFriend()}
 async function loadClubs(){if(!cloud.user)return;const rows=await db.clubs(),me=cloud.user.id;
  cloud.clubs=rows.map(r=>{const mine=(r.club_members||[]).find(m=>m.user_id===me);
   return{id:r.id,name:r.name,code:r.code,owner:r.owner,bookId:key(r.book_title,r.book_author),bt:r.book_title,ba:r.book_author,pages:r.pages,chapters:r.chapters,sched:r.sched||[],myCh:mine?mine.ch:0,myName:mine?mine.name:'',
@@ -1248,7 +1373,7 @@ async function loadClubs(){if(!cloud.user)return;const rows=await db.clubs(),me=
   if(b.shelf==='want')setShelf(b,'reading');
   b.chapters=c.chapters;b.cur=Math.min(b.cur||0,c.chapters.length)})}
 async function cloudFlush(){if(!cloud.user||!cloud.synced)return;
- try{await db.putData({...S,clubs:[]});let moved=false;
+ try{await db.putData({...S,clubs:[]});try{await syncProfile()}catch(x){}let moved=false;
   for(const c of cloud.clubs){const b=bk(c.bookId);if(b&&(b.cur!==c.myCh||c.myName!==S.profile.name)){await db.progress(c.id,b.cur,S.profile.name);if(b.cur!==c.myCh)moved=true;c.myCh=b.cur;c.myName=S.profile.name}}
   cloud.err='';if(moved){await loadClubs();if(page==='clubs')render()}}
  catch(e){cloud.err=(e&&e.message)||'Sync failed'}}
@@ -1260,6 +1385,26 @@ setInterval(pollClubs,15000);
 if(cloud.on){cloud.sb.auth.getSession().then(({data})=>{cloud.ready=true;onSession(data.session)}).catch(()=>{cloud.ready=true;onSession(null)});
  cloud.sb.auth.onAuthStateChange((ev,sess)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')setTimeout(()=>onSession(sess),0)})}
 
+
+/* ---------- friends ---------- */
+function sharedList(){const p=S.profile,v=(p.priv&&p.priv.finished)||p.vis;if(v==='private')return[];
+ return S.books.filter(b=>b.shelf==='finished'&&b.rating!=null).slice(0,500).map(b=>({t:b.t,a:b.a,r:b.rating,tg:(b.tags||[]).slice(0,5),p:b.pages||0}))}
+let profSig='';
+async function syncProfile(){if(!cloud.user)return;const shared=sharedList(),sig=JSON.stringify([S.profile.name,shared]);if(sig===profSig&&cloud.fcode)return;
+ await db.putProfile(S.profile.name||'Reader',shared);profSig=sig;if(!cloud.fcode)cloud.fcode=(await db.myCode())||''}
+async function loadFriends(){if(!cloud.user)return;try{cloud.friends=await db.friends()}catch(e){}}
+async function sendFriend(code){try{const r=await db.reqFriend(code);await loadFriends();render();toast(r.status==='accepted'?'You are now friends with '+r.name:r.status==='pending'?'Request sent to '+r.name:'Already connected with '+r.name)}catch(e){fail(e)}}
+async function shareFriend(){if(!cloud.fcode)return;const url=location.origin+location.pathname+'?friend='+encodeURIComponent(cloud.fcode),text='Connect with me on Readers so we can share book picks. Tap the link to add me (code '+cloud.fcode+'):';
+ try{if(navigator.share){await navigator.share({title:'Add me on Readers',text,url});return}}catch(x){if(x&&x.name==='AbortError')return}
+ try{await navigator.clipboard.writeText(text+' '+url);toast('Friend link copied. Paste it into a text or email.')}catch(x){toast('Friend link: '+url)}}
+(function(){try{const u=new URL(location.href),c=u.searchParams.get('friend');if(c){store.set('readers.friend',c.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12));u.searchParams.delete('friend');history.replaceState(null,'',u.pathname+u.search+u.hash)}}catch(e){}})();
+async function runPendingFriend(){const code=store.get('readers.friend','');if(!code||!cloud.user||!cloud.synced)return;
+ try{localStorage.removeItem('readers.friend')}catch(e){}
+ try{const r=await db.reqFriend(code);await loadFriends();page='profile';$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p==='profile'));render();toast(r.status==='accepted'?'You are now friends with '+r.name:'Friend request sent to '+r.name)}catch(e){fail(e)}}
+const frSig=()=>(cloud.friends||[]).map(f=>f.id+f.status+(f.shared||[]).length).join('|');
+async function pollFriends(){if(!cloud.user||!cloud.synced||document.hidden||$('dialog[open]')||(page!=='profile'&&page!=='discover'))return;
+ const ae=document.activeElement;if(ae&&ae.tagName==='INPUT'&&ae.value)return;const b=frSig();await loadFriends();if(frSig()!==b)render()}
+setInterval(pollFriends,20000);
 
 /* ---------- invites, auto join and the account button ---------- */
 const inviteURL=c=>location.origin+location.pathname+'?join='+encodeURIComponent(c);
