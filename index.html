@@ -689,9 +689,14 @@ const key=(t,a)=>(t+'|'+a).toLowerCase().replace(/\s+/g,' ').trim();
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* ---------- cloud (Supabase). Leave both blank to run in local demo mode ---------- */
 const SB_URL='https://mltikckphcxkbtgmgjvw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdGlrY2twaGN4a2J0Z21nanZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NTY1NzEsImV4cCI6MjExMTIzMjU3MX0.8nwf4Bf881Wv-JTX2--PTR1iqJdt2C7NQEKhdCBNp1M';
-const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],synced:false,err:''};
+const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],synced:false,ready:false,err:''};
 if(cloud.on)cloud.sb=window.supabase.createClient(SB_URL,SB_KEY);
 let pushT;
+const blank=()=>({v:1,goal:24,custom:[],dismissed:[],books:[],clubs:[],sort:'recent',profile:{name:'Reader',since:new Date().getFullYear(),vis:'friends',priv:{},imported:0}});
+function gate(){if(!cloud.on)return '';
+ if(!cloud.ready)return '<div class="inner"><p class="hint" style="text-align:center;padding:40px 0">Loading…</p></div>';
+ if(cloud.user)return '';
+ return `<div class="inner"><div class="card" style="text-align:center;padding:44px 24px;max-width:560px;margin:24px auto"><h2 style="margin:0 0 10px">Welcome to Readers</h2><p style="margin:0 0 22px">Track what you read, rate it, keep notes, and join chapter by chapter book clubs with friends.</p><div class="btnrow" style="justify-content:center;margin:0"><button class="btn pri" data-act="signup">Create account</button><button class="btn" data-act="signin">Sign in</button></div></div></div>`}
 const fail=e=>toast((e&&e.message)||'Something went wrong');
 const db={
  async getData(){const{data,error}=await cloud.sb.from('user_data').select('data').eq('user_id',cloud.user.id).maybeSingle();if(error)throw error;return data&&data.data},
@@ -828,7 +833,7 @@ function seed(){
  ]};
 }
 let S=store.get('readers.v1',null);
-if(!S||!Array.isArray(S.books))S=seed();
+if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
 function normalize(){S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
@@ -892,7 +897,7 @@ const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('
 let page='home';
 const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
-function render(){main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+VIEWS[page]()+'</div>';lazy(main);if(page==='shelf')wireSearch()}
+function render(){main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+(gate()||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
 function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p));render()}
 $$('.book').forEach(b=>b.onclick=()=>{
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return go(b.dataset.p);
@@ -1085,7 +1090,7 @@ function vProfile(){const p=S.profile,sh=[...Object.keys(SH),...S.custom.map(c=>
  ${accountCard()}<section class="card sec"><h3 class="ct">Profile</h3><div class="fld"><label>Display name<input data-p="name" value="${esc(p.name)}" maxlength="40"></label></div><div class="fld"><label>Profile visibility<select data-p="vis">${vis(p.vis)}</select></label></div></section>
  <section class="card sec"><h3 class="ct">Shelf privacy</h3>${sh.map(k=>`<div class="prow"><span>${esc(nm(k))}</span><select data-p="priv" data-k="${esc(k)}" aria-label="${esc(nm(k))} visibility">${vis(p.priv[k]||p.vis)}</select></div>`).join('')}</section>
  <section class="card sec"><h3 class="ct">Bring your books</h3><p class="hint" style="margin:0 0 10px">In Goodreads, open My Books, choose Import and export, then Export Library. Drop the CSV here. Books already in your library are skipped.</p><div class="btnrow" style="margin:0"><label class="btn pri filebtn">Import Goodreads CSV<input type="file" accept=".csv,text/csv" data-import="csv" hidden></label></div></section>
- <section class="card sec"><h3 class="ct">Your data</h3><p class="hint" style="margin:0 0 10px">Everything is stored on this device. Export a backup any time.</p><div class="btnrow" style="margin:0"><button class="btn" data-act="export">Export backup</button><label class="btn filebtn">Restore backup<input type="file" accept=".json,application/json" data-import="json" hidden></label><button class="btn" data-act="clearcovers">Refresh covers</button><button class="btn danger" data-act="reset">Reset demo data</button></div></section>`}
+ <section class="card sec"><h3 class="ct">Your data</h3><p class="hint" style="margin:0 0 10px">${cloud.on?'Your library is saved to your account. You can also export a backup any time.':'Everything is stored on this device. Export a backup any time.'}</p><div class="btnrow" style="margin:0"><button class="btn" data-act="export">Export backup</button><label class="btn filebtn">Restore backup<input type="file" accept=".json,application/json" data-import="json" hidden></label><button class="btn" data-act="clearcovers">Refresh covers</button>${cloud.on?'<button class="btn" data-act="sample">Add sample books</button>':'<button class="btn danger" data-act="reset">Reset demo data</button>'}</div></section>`}
 function parseCSV(s){const rows=[];let r=[],f='',q=false;
  for(let i=0;i<s.length;i++){const c=s[i];
   if(q){if(c==='"'){if(s[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
@@ -1145,6 +1150,7 @@ document.addEventListener('click',e=>{
  else if(a==='goal'){S.goal=Math.max(1,Math.min(200,S.goal+(+el.dataset.d)));save();render()}
  else if(a==='export'){const u=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download='readers-backup.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
  else if(a==='clearcovers'){Object.keys(covers).forEach(k=>{if(!covers[k])delete covers[k]});saveCovers();toast('Missing covers will be retried');render()}
+ else if(a==='sample'){const add=seed().books.filter(x=>!bk(x.id));S.books.push(...add);normalize();save();toast(add.length?'Added '+add.length+' sample books':'Sample books are already in your library');render()}
  else if(a==='reset'){if(resetArm){S=seed();normalize();save();resetArm=0;toast('Demo data restored');render()}else{resetArm=1;el.textContent='Click again to confirm';setTimeout(()=>{resetArm=0;if(el.isConnected)el.textContent='Reset demo data'},3000)}}});
 document.addEventListener('change',e=>{const t=e.target;
  if(t.id==='sortby'){S.sort=t.value;save();refreshRails();return}
@@ -1171,11 +1177,11 @@ async function authSubmit(mode,email,pw,name){const a=cloud.sb.auth;
  if(mode==='up'){const{data,error}=await a.signUp({email,password:pw,options:{data:{name}}});if(error)throw error;if(!data.session)return 'confirm'}
  else{const{error}=await a.signInWithPassword({email,password:pw});if(error)throw error}}
 async function onSession(sess){
- if(!sess){if(cloud.user){cloud.user=null;cloud.clubs=[];cloud.synced=false;S=seed();normalize();store.set('readers.v1',S);cid=null;render()}return}
+ if(!sess){cloud.user=null;cloud.clubs=[];cloud.synced=false;S=cloud.on?blank():seed();normalize();store.set('readers.v1',S);cid=null;render();return}
  if(cloud.user&&cloud.user.id===sess.user.id)return;
- cloud.user=sess.user;cloud.synced=false;
+ cloud.ready=true;cloud.user=sess.user;cloud.synced=false;
  try{const d=await db.getData(),md=sess.user.user_metadata||{};
-  if(d&&Array.isArray(d.books))S=d;else S={v:1,goal:24,custom:[],dismissed:[],books:[],clubs:[],profile:{name:md.name||(sess.user.email||'Reader').split('@')[0],since:YEAR,vis:'friends',priv:{},imported:0}};
+  if(d&&Array.isArray(d.books))S=d;else {S=blank();S.profile.name=md.name||(sess.user.email||'Reader').split('@')[0]}
   S.clubs=[];normalize();store.set('readers.v1',S);
   if(!d)await db.putData(S);
   cloud.synced=true;await loadClubs();cloudSoon()}
@@ -1199,7 +1205,7 @@ async function pollClubs(){if(!cloud.user||!cloud.synced||page!=='clubs'||docume
  const ae=document.activeElement;if(ae&&ae.closest&&ae.closest('.composer')&&ae.value)return;
  const before=clubSig();try{await loadClubs()}catch(e){return}if(clubSig()!==before)render()}
 setInterval(pollClubs,15000);
-if(cloud.on){cloud.sb.auth.getSession().then(({data})=>onSession(data.session));
+if(cloud.on){cloud.sb.auth.getSession().then(({data})=>{cloud.ready=true;onSession(data.session)}).catch(()=>{cloud.ready=true;onSession(null)});
  cloud.sb.auth.onAuthStateChange((ev,sess)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')setTimeout(()=>onSession(sess),0)})}
 
 /* ---------- theme ---------- */
