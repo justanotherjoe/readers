@@ -587,7 +587,9 @@ dialog::backdrop{background:rgba(10,20,16,.6)}
 .dqfoot .dots{display:flex;gap:5px}.dqfoot .dots i{width:8px;height:8px;border-radius:50%;background:rgba(127,127,127,.35)}.dqfoot .dots i.on{background:var(--page-orange)}
 .dqend{padding:40px 28px;text-align:center}
 @media (max-width:600px){.now{grid-template-columns:100px 1fr;gap:16px}.now .cv{width:100px;height:150px}.dq{grid-template-columns:1fr}.dq .big{width:140px;height:210px;margin:0 auto}}
-</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="theme-color" content="#0F6E56"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Readers">
+<script>var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style id="app-css">
 .inner{padding:0 48px}
 .pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
@@ -718,12 +720,43 @@ body[data-skin=sepia] .acct.in,body[data-skin=sepia] .btn.pri{color:#fff}
 #acctmenu .am-t .ck{flex:none;color:var(--page-green)}
 body[data-theme=dark] #acctmenu .am-t .ck{color:var(--page-mint)}
 
+.rel{border-top:1px solid rgba(127,127,127,.3);padding:6px 0}
+.rel summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;padding:10px 0}
+.rel summary::-webkit-details-marker{display:none}
+.rel summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin-right:4px;align-self:center;transition:transform .15s;flex:none}
+.rel[open] summary::before{transform:rotate(45deg)}
+.rel .rd{font-size:13px;color:var(--page-sub);flex-basis:100%;margin-left:20px}
+.rel .rt{font:700 20px Fraunces,Georgia,serif}
+.rel ul{list-style:none;margin:0;padding:0 0 10px 20px;display:flex;flex-direction:column;gap:12px}
+.rel li{display:flex;gap:10px;align-items:flex-start;line-height:1.45}
+.rel .tag{flex:none;min-width:70px;text-align:center;font:600 11px Work Sans,sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:2px;background:rgba(127,127,127,.2)}
+.rel .tg-new{background:var(--page-green);color:#fff}
+.rel .tg-imp{background:rgba(127,127,127,.22)}
+.rel .tg-fix{border:1px solid currentColor;background:transparent}
+.rnew{font:600 11px Work Sans,sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--page-orange);color:#fff;margin-left:8px}
+body[data-theme=dark] .rnew{color:#10201B}
+#acctmenu .am-r{display:flex;align-items:center}
+.acct{position:relative}
+body[data-new="1"] .acct::after,body[data-freq="1"] .acct::after{content:"";position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:var(--page-orange);border:2px solid var(--page-bg)}
+
+.toast.act{display:flex;align-items:center;gap:14px}.toast.act.show{pointer-events:auto}
+.tundo{font:inherit;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.7);border-radius:6px;padding:4px 10px;cursor:pointer}
+.frow .fn{display:flex;flex-direction:column;gap:2px}.frow .fs{color:var(--page-sub);font-size:13px;font-weight:400}
+.sharebox{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.qrbox{width:150px;height:150px;background:#fff;padding:10px;border-radius:12px;flex:none;border:1px solid rgba(127,127,127,.3)}.qrbox svg{width:100%;height:100%;display:block}
+.check .ckb{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid rgba(127,127,127,.6);display:grid;place-items:center;color:#fff}
+.check .ck.done .ckb{background:var(--page-green);border-color:var(--page-green)}.check .ck.done .fn{text-decoration:line-through;color:var(--page-sub)}
+.nudge{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px}
+.nudgeln{color:var(--page-orange);font-weight:600}
+.match b{font:700 28px Fraunces,Georgia,serif;margin-right:6px}
+.sec.act{margin-top:16px}.check{margin-bottom:16px}
+
 @media (max-width:700px),(hover:none) and (max-width:900px){
  .track{scroll-padding-left:16px}
  .cap{display:block;width:110px}
  .cw .cover{width:110px;height:165px}
  header{flex-direction:row;justify-content:center;gap:10px;padding:14px 120px 0 16px}
  header img{width:44px}header h1{font-size:26px}
+ .rel li{flex-direction:column;gap:6px}.rel .tag{min-width:0;align-self:flex-start;margin-top:0}.rel ul{padding-left:0}.rel .rd{margin-left:20px}
  #tools{top:10px;right:10px;gap:6px}.acct{height:34px}.acct.in{width:34px}#acctmenu{top:52px;right:10px}
  main,main.home,main.wide{padding:18px 16px calc(130px + env(safe-area-inset-bottom))!important}
  .bookcase{position:fixed;left:0;right:0;bottom:0;width:auto;max-width:none;margin:0;padding:0;z-index:15;background:var(--page-bg);border-top:1px solid rgba(127,127,127,.35);overflow:visible}
@@ -772,7 +805,7 @@ const key=(t,a)=>(t+'|'+a).toLowerCase().replace(/\s+/g,' ').trim();
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* ---------- cloud (Supabase). Leave both blank to run in local demo mode ---------- */
 const SB_URL='https://mltikckphcxkbtgmgjvw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdGlrY2twaGN4a2J0Z21nanZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NTY1NzEsImV4cCI6MjExMTIzMjU3MX0.8nwf4Bf881Wv-JTX2--PTR1iqJdt2C7NQEKhdCBNp1M';
-const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],friends:[],fcode:'',synced:false,ready:false,err:''};
+const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],friends:[],recs:[],fcode:'',synced:false,ready:false,err:''};
 if(cloud.on)cloud.sb=window.supabase.createClient(SB_URL,SB_KEY);
 let pushT;
 const blank=()=>({v:1,goal:24,custom:[],dismissed:[],books:[],clubs:[],sort:'recent',profile:{name:'Reader',since:new Date().getFullYear(),vis:'friends',priv:{},imported:0}});
@@ -792,7 +825,11 @@ const db={
  async post(p){const{data,error}=await cloud.sb.from('club_posts').insert(p).select().single();if(error)throw error;return data},
  async progress(id,ch,name){const{error}=await cloud.sb.from('club_members').update({ch,name}).eq('club_id',id).eq('user_id',cloud.user.id);if(error)throw error},
  async feedback(text){const{error}=await cloud.sb.from('feedback').insert({text,page});if(error)throw error},
- async putProfile(name,shared){const{error}=await cloud.sb.from('profiles').upsert({user_id:cloud.user.id,name,shared,updated_at:new Date().toISOString()});if(error)throw error},
+ async putProfile(name,shared,disc,un){const{error}=await cloud.sb.from('profiles').upsert({user_id:cloud.user.id,name,shared,discoverable:!!disc,username:un||null,updated_at:new Date().toISOString()});if(error)throw error},
+ async find(q){const{data,error}=await cloud.sb.rpc('find_readers',{p_q:q});if(error)throw error;return data||[]},
+ async reqUser(uid){const{data,error}=await cloud.sb.rpc('request_friend_user',{p_user:uid});if(error)throw error;return data},
+ async sendRec(row){const{error}=await cloud.sb.from('recommendations').insert({...row,from_user:cloud.user.id});if(error)throw error},
+ async recs(){const{data,error}=await cloud.sb.from('recommendations').select('*').eq('to_user',cloud.user.id).order('created_at',{ascending:false}).limit(50);if(error)throw error;return data||[]},
  async myCode(){const{data,error}=await cloud.sb.from('profiles').select('code').eq('user_id',cloud.user.id).maybeSingle();if(error)throw error;return data&&data.code},
  async friends(){const{data,error}=await cloud.sb.rpc('my_friends');if(error)throw error;return data||[]},
  async reqFriend(code){const{data,error}=await cloud.sb.rpc('request_friend',{p_code:code});if(error)throw error;return data},
@@ -970,7 +1007,7 @@ function seed(){
 }
 let S=store.get('readers.v1',null);
 if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
-function normalize(){S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
+function normalize(){S.onbHide=!!S.onbHide;S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
 let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>store.set('readers.v1',S),150);cloudSoon()};
@@ -1042,6 +1079,8 @@ function lanes(mood){
  const pool=CAT.filter(c=>!seen.has(c.id)&&(!mood||c.tags.includes(mood)));
  const fav=S.books.filter(b=>b.shelf==='finished'&&b.rating>=4).sort((a,b)=>b.rating-a.rating)[0];
  const anchor=mo=>S.books.filter(b=>b.shelf==='finished'&&b.rating>=3.5&&b.tags.includes(mo)).sort((a,b)=>b.rating-a.rating)[0];
+ const SI=[];(cloud.user?(cloud.recs||[]):[]).forEach(r=>{const id=key(r.title,r.author);if(seen.has(id)||SI.some(x=>x.c.id===id)||(mood&&!(r.tags||[]).includes(mood)))return;const c=regCat(id,{t:r.title,a:r.author,tags:r.tags||[],pages:r.pages||0});SI.push({c,sc:0,why:`<b>${esc(r.from_name)}</b> recommends this${r.note?': \u201c'+esc(r.note)+'\u201d':'.'}`})});
+ if(SI.length)out.push({k:'sent',title:'Sent to you by friends',sub:'Personal picks from people who know you.',items:take(SI,6)});
  const L1=take(recommend(mood).filter(r=>gOf(r.c).some(t=>g[t]>0)&&r.sc>0),6);
  if(L1.length)out.push({k:'close',title:fav?'Because you loved '+fav.t:'More of what you love',sub:'The closest matches to the books you rated highly.',items:L1});
  const fr=cloud.user?(cloud.friends||[]).filter(f=>f.status==='accepted'):[],fm={};
@@ -1072,16 +1111,19 @@ function why(c,b,sh){
 /* ---------- navigation ---------- */
 const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('#fm');
 let page='home';
-const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile()};
+const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile(),notes:()=>vNotes(),friends:()=>vFriends()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
-function render(){renderAcct();document.body.dataset.freq=(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+(gate()||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
+function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';main.innerHTML='<div class="page">'+(gate()||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
 const phone=()=>matchMedia('(max-width:700px)').matches;
-function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&p==='stats'&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
+function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&(p==='stats'||p==='notes'||p==='friends')&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
 $$('.book').forEach(b=>b.onclick=()=>{
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return go(b.dataset.p);
  $$('.book').forEach(x=>x.classList.remove('active'));b.classList.add('opening');
  setTimeout(()=>{b.classList.remove('opening');go(b.dataset.p)},280)});
-function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400)}
+function toast(m,undo){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t)}
+ t.textContent=m;t.classList.toggle('act',!!undo);
+ if(undo){const b=document.createElement('button');b.type='button';b.className='tundo';b.textContent='Undo';b.onclick=()=>{clearTimeout(t._h);t.classList.remove('show');undo()};t.appendChild(b)}
+ t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),undo?6500:2400)}
 
 /* ---------- shared pieces ---------- */
 function coverBtn(b){const p=progress(b),k=method(b);
@@ -1106,7 +1148,7 @@ function vHome(){
  const LOCK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
  const rc=done<GOAL_UNLOCK?`<section class="recs locked"><div class="rl"><h3><span class="lk">${LOCK}</span>Recommendations unlock at ${GOAL_UNLOCK} books</h3><p>Readers learns your taste from the books you finish and rate. ${GOAL_UNLOCK-done===1?'Just 1 more to go.':(GOAL_UNLOCK-done)+' more to go.'} Nothing here is sponsored.</p>${meter(done,GOAL_UNLOCK).replace('books logged','finished books')}</div><div class="btnrow" style="margin:0"><button class="btn pri" data-go="shelf">Add books</button><button class="btn" data-go="profile">Import from Goodreads</button></div></section>`
  :`<section class="recs"><div><h3>Your recommendations are ready</h3><p>${Math.min(6,recs.length)} books picked from the ${done} you have finished. Go through them one at a time.</p></div><div style="display:flex;align-items:center;gap:18px"><div class="stack">${recs.slice(0,4).map(x=>`<div ${cvAttrs(x.c)}></div>`).join('')}</div><button class="btn pri" data-act="openq">See recommendations</button></div></section>`;
- return hero+goal+rc}
+ return checklist()+hero+goal+nudgeCard()+actCard()+rc}
 let QR=[],qi=0;
 function renderQ(){
  if(qi>=QR.length){dq.innerHTML='<div class="dqend"><h4 style="font:700 26px Fraunces,Georgia,serif;margin:0 0 8px">That is your queue for now</h4><p style="color:var(--page-sub)">Finish another book and Readers will build a new one.</p><button class="btn pri" data-act="close-dlg">Done</button></div>';return}
@@ -1165,7 +1207,7 @@ function openBook(id,focusNote){const b=bk(id);if(!b)return;const n=b.chapters&&
  ${b.shelf==='reading'?(n?`<div class="fld"><label>Chapters finished <output>${b.cur} of ${n}</output><input type="range" min="0" max="${n}" step="1" value="${b.cur}" data-f="cur"></label></div>`:`<div class="fld"><label>Progress <output>${b.pr||0}%</output><input type="range" min="0" max="100" step="1" value="${b.pr||0}" data-f="pr"></label></div>`):''}
  ${S.custom.length?`<div class="fld"><span class="lab">Custom shelves</span><div class="chips" style="margin:6px 0 0">${S.custom.map(c=>`<label class="chip chk"><input type="checkbox" data-f="custom" data-name="${esc(c)}"${b.custom.includes(c)?' checked':''}> ${esc(c)}</label>`).join('')}</div></div>`:''}
  <div class="fld notes"><span class="lab">Notes <small>${b.notes.length?b.notes.length+' in the order you added them':''}</small></span>${notesHTML(b)}<textarea id="newnote" rows="2" placeholder="Quotes, thoughts, where you stopped"></textarea><button class="btn" type="button" data-act="addnote" data-id="${esc(b.id)}">Add note</button></div>
- <div class="acts"><button class="btn pri" data-act="close-dlg">Done</button><button class="btn danger" data-act="remove" data-id="${esc(b.id)}">Remove</button></div></div></div>`;
+ <div class="acts"><button class="btn pri" data-act="close-dlg">Done</button>${cloud.user&&accepted().length?`<button class="btn" data-act="recfriend" data-id="${esc(b.id)}">Recommend to a friend</button>`:''}<button class="btn danger" data-act="remove" data-id="${esc(b.id)}">Remove</button></div></div></div>`;
  if(!bd.open)bd.showModal();lazy(bd);if(focusNote)$('#newnote',bd).focus()}
 bd.addEventListener('input',e=>{if(e.target.type==='range'){const o=$('output',e.target.closest('label'));const f=e.target.dataset.f,v=e.target.value;if(o)o.textContent=f==='pr'?v+'%':v+' of '+bk(bd.dataset.id).chapters.length}});
 bd.addEventListener('change',e=>{const b=bk(bd.dataset.id),f=e.target.dataset.f;if(!b||!f)return;const v=e.target.value;
@@ -1214,7 +1256,7 @@ function vClubs(){
   ${cl.code?`<p class="by" style="margin:0 0 14px">Invite code <b class="code">${esc(cl.code)}</b> <button class="btn" data-act="copycode" data-code="${esc(cl.code)}">Copy</button> <button class="btn pri" data-act="shareinv" data-code="${esc(cl.code)}" data-name="${esc(cl.name)}" data-book="${esc(b.t)}">Share invite</button></p>`:''}
   <div class="chap">${esc(mile)}<small>${sub}</small></div>
   <div class="ticks" aria-hidden="true">${b.chapters.map((_,i)=>`<span class="${i<me?'done':i===me?'cur':''}"></span>`).join('')}</div>
-  <p class="by" style="margin:6px 0 0">You are on chapter ${Math.min(me+1,n)} of ${n}</p>
+  <p class="by" style="margin:6px 0 0">You are on chapter ${Math.min(me+1,n)} of ${n}</p>${nudgeLine(cl,me)}
   <div class="btnrow">${me<n?`<button class="btn pri" data-act="clubnext" data-id="${esc(b.id)}">Finished chapter ${me+1}</button>`:`<button class="btn pri" data-act="finish" data-id="${esc(b.id)}">Mark book finished</button>`}<button class="btn" data-act="delclub" data-id="${cl.id}">Leave club</button></div></section>
  <section class="card"><h3 class="ct">Members <small>${mem.length}</small></h3>${mem.map(m=>`<div class="mem"><span class="av${m.me?' me':''}">${initials(m.n)}</span><span class="mn">${esc(m.n)}</span><span class="mp">Chapter ${Math.min(m.ch+1,n)}</span><span class="bar"><i style="width:${m.ch/n*100}%"></i></span></div>`).join('')}</section></div>
  <section class="card" style="margin-top:16px"><div class="pagehead" style="margin-bottom:10px"><h3 class="ct" style="margin:0">Discussion</h3><label class="chsel">Chapter <select data-act="chsel">${b.chapters.map((t,i)=>`<option value="${i+1}"${i+1===cch?' selected':''}>${i+1}${i+1>me?' (locked)':''}</option>`).join('')}</select></label></div>
@@ -1265,15 +1307,8 @@ function accountCard(){if(!cloud.on)return '';
  return `<section class="card sec"><h3 class="ct">Account</h3><p class="hint" style="margin:0 0 10px">Signed in as ${esc(cloud.user.email)}. Your shelves, ratings, notes and clubs are saved to your account.${cloud.err?' <b>Sync problem: '+esc(cloud.err)+'</b>':''}</p><div class="btnrow" style="margin:0"><button class="btn" data-act="signout">Sign out</button></div></section>
  <section class="card sec"><h3 class="ct">Send feedback</h3><div class="fld"><textarea id="fbtext" rows="3" maxlength="2000" placeholder="What is confusing, broken or missing?" aria-label="Feedback" style="width:100%;box-sizing:border-box"></textarea></div><button class="btn pri" data-act="sendfb">Send</button></section>`}
 
-function friendsCard(){if(!cloud.user)return '';const fr=cloud.friends||[];
- const inc=fr.filter(f=>f.status==='pending'&&f.incoming),out=fr.filter(f=>f.status==='pending'&&!f.incoming),ok=fr.filter(f=>f.status==='accepted');
- const row=(f,btns)=>`<div class="frow"><span class="av">${esc(initials(f.name||'R'))}</span><span class="fn">${esc(f.name)}</span>${btns}</div>`;
- return `<section class="card sec"><h3 class="ct">Friends</h3><p class="hint" style="margin:0 0 10px">Connect with friends and the books they loved show up in Discover. Friends only see the titles and ratings of finished books, and only if your Shelf privacy allows it.</p>
- ${cloud.fcode?`<p class="by" style="margin:0 0 10px">Your friend code <b class="code">${esc(cloud.fcode)}</b> <button class="btn" data-act="copyf">Copy</button> <button class="btn pri" data-act="sharef">Share link</button></p>`:''}
- <form class="composer" data-form="addfriend"><input name="code" required maxlength="12" autocomplete="off" autocapitalize="none" placeholder="Enter a friend's code" aria-label="Friend code"><button class="btn" type="submit">Add friend</button></form>
- ${inc.length?'<h4 class="fsub">Requests</h4>'+inc.map(f=>row(f,`<span class="fbt"><button class="btn pri" data-act="facc" data-id="${esc(f.id)}">Accept</button><button class="btn" data-act="fdec" data-id="${esc(f.id)}">Decline</button></span>`)).join(''):''}
- ${out.length?'<h4 class="fsub">Waiting for a reply</h4>'+out.map(f=>row(f,`<span class="fbt"><button class="btn" data-act="frem" data-id="${esc(f.id)}">Cancel</button></span>`)).join(''):''}
- <h4 class="fsub">Your friends <small>${ok.length}</small></h4>${ok.length?ok.map(f=>row(f,`<span class="fbt"><small>${(f.shared||[]).length} shared</small><button class="btn" data-act="frem" data-id="${esc(f.id)}">Remove</button></span>`)).join(''):'<p class="hint" style="margin:0">No friends yet. Share your link or enter a friend\'s code.</p>'}</section>`}
+function friendsCard(){if(!cloud.user)return '';const fr=cloud.friends||[],ok=fr.filter(f=>f.status==='accepted').length,inc=fr.filter(f=>f.status==='pending'&&f.incoming).length;
+ return `<section class="card sec"><h3 class="ct">Friends</h3><p class="hint" style="margin:0 0 10px">${ok} friend${ok===1?'':'s'}${inc?', '+inc+' request'+(inc===1?'':'s')+' waiting':''}. Add friends to see the books they loved in Discover.</p><button class="btn pri" data-act="gofriends">Open Friends</button></section>`}
 function vProfile(){const p=S.profile,sh=[...Object.keys(SH),...S.custom.map(c=>'c:'+c)],nm=k=>k.startsWith('c:')?k.slice(2):SH[k];
  const vis=(v,f)=>['public','friends','private'].map(o=>`<option value="${o}"${v===o?' selected':''}>${o[0].toUpperCase()+o.slice(1)}</option>`).join('');
  return `<div class="mobonly" style="margin:0 0 14px"><button class="btn" data-go="stats" style="width:100%">See your reading stats</button></div><div class="profhead"><span class="av big">${esc(initials(p.name||'R'))}</span><div><h2 style="text-align:left;margin:0">${esc(p.name)}</h2><p style="margin:2px 0 0;text-align:left">Reading since ${p.since}. ${S.books.length} books in your library${p.imported?`, ${p.imported} imported from Goodreads`:''}.</p></div></div>
@@ -1317,22 +1352,36 @@ document.addEventListener('click',e=>{
   if(f==='overall')b.rating=v||null;else if(v)b.cats[f]=v;else delete b.cats[f];save();
   const box=el.closest('.rater');if(box){const lab=$('.rlab span',box).textContent;box.outerHTML=raterBlock(b,f,lab)}}
  else if(a==='addnote'&&b){const ta=$('#newnote',bd),t=ta.value.trim();if(!t)return ta.focus();b.notes.push({id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t,ts:new Date().toISOString()});save();openBook(id,true)}
- else if(a==='delnote'&&b){b.notes=b.notes.filter(n=>n.id!==el.dataset.n);save();openBook(id)}
+ else if(a==='delnote'&&b){const ni=b.notes.findIndex(n=>n.id===el.dataset.n),nn=b.notes[ni];b.notes=b.notes.filter(n=>n.id!==el.dataset.n);save();openBook(id);
+  if(nn)toast('Note removed',()=>{const bb=bk(id);if(!bb)return;bb.notes.splice(Math.min(ni,bb.notes.length),0,nn);save();if(bd.open)openBook(id)})}
  else if(a==='scroll'){const t=el.closest('.rail').querySelector('.track');t.scrollBy({left:t.clientWidth*.8*(+el.dataset.d)})}
  else if(a==='nextch'&&b){if(b.cur<b.chapters.length){b.cur++;save();toast('Now on chapter '+Math.min(b.cur+1,b.chapters.length));render()}}
  else if(a==='finish'&&b){setShelf(b,'finished');render();openBook(id);toast('Marked as finished. Add a rating.')}
  else if(a==='openq'){QR=topPicks();qi=0;renderQ();dq.showModal()}
- else if(a==='remove'){S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed')}
+ else if(a==='remove'){const ob=bk(id),oi=S.books.indexOf(ob);S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed '+(ob?ob.t:'book'),()=>{if(ob&&!bk(id)){S.books.splice(Math.min(oi,S.books.length),0,ob);save();render()}});render()}
  else if(a==='newshelf')openForm('New shelf','<div class="fld"><label>Shelf name<input name="name" required maxlength="30" placeholder="Beach reads"></label></div>',fd=>{const n=fd.get('name').trim();if(n&&!S.custom.includes(n)&&!Object.values(SH).includes(n)){S.custom.push(n);save();refreshRails();toast('Created '+n)}},'Create shelf');
  else if(a==='sadd')searchAdd(el);
  else if(a==='mood'){dm=el.dataset.m;render()}
  else if(a==='rec-want'){const c=CATID[id];addBook(c,'want');(c.tags||[]).forEach(t=>S.liked[t]=(S.liked[t]||0)+1);save();toast('Added '+c.t+' to Want to Read');render()}
- else if(a==='rec-no'){const c=CATID[id];S.dismissed.push(id);if(c)c.tags.forEach(t=>S.nope[t]=(S.nope[t]||0)+1);save();toast('Got it. You will see fewer picks like that.');render()}
+ else if(a==='rec-no'){const c=CATID[id];S.dismissed.push(id);if(c)c.tags.forEach(t=>S.nope[t]=(S.nope[t]||0)+1);save();toast('Got it. You will see fewer picks like that.',()=>{S.dismissed=S.dismissed.filter(x=>x!==id);if(c)c.tags.forEach(t=>{S.nope[t]=Math.max(0,(S.nope[t]||0)-1)});save();render()});render()}
  else if(a==='copyf'){try{navigator.clipboard.writeText(cloud.fcode);toast('Friend code copied')}catch(x){toast('Code: '+cloud.fcode)}}
  else if(a==='sharef')shareFriend();
  else if(a==='facc')db.respond(id,true).then(async()=>{await loadFriends();toast('You are now friends');render()}).catch(fail);
  else if(a==='fdec')db.respond(id,false).then(async()=>{await loadFriends();render()}).catch(fail);
- else if(a==='frem'){db.unfriend(id).then(async()=>{await loadFriends();render()}).catch(fail)}
+ else if(a==='frem'){db.unfriend(id).then(async()=>{if(fid===id)fid=null;await loadFriends();render()}).catch(fail)}
+ else if(a==='gofriends'){closeMenu();fid=null;go('friends')}
+ else if(a==='fview'){fid=id;render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
+ else if(a==='fback'){fid=null;render()}
+ else if(a==='addcode')sendFriend(el.dataset.code)
+ else if(a==='addm')db.reqUser(el.dataset.uid).then(async r=>{await loadFriends();toast(r.status==='accepted'?'You are now friends with '+r.name:'Request sent to '+r.name);render()}).catch(fail)
+ else if(a==='recto')recommendDialog(null,fid)
+ else if(a==='recfriend'){bd.close();recommendDialog(id)}
+ else if(a==='hidecheck'){S.onbHide=true;save();render()}
+ else if(a==='gocl'){cid=id;cch=null;go('clubs')}
+ else if(a==='installapp')installApp()
+ else if(a==='forgot')forgotPw()
+ else if(a==='saveun'){const v=($('#unin').value||'').trim().replace(/^@/,'');if(v&&!/^[A-Za-z0-9_]{3,20}$/.test(v))return toast('Use 3 to 20 letters, numbers or underscores');
+  const old=S.profile.username;S.profile.username=v;profSig='';syncProfile().then(()=>{save();toast(v?'Username saved':'Username removed')}).catch(x=>{S.profile.username=old;profSig='';toast(/duplicate|unique/i.test((x&&x.message)||'')?'That username is taken':((x&&x.message)||'Could not save'))})}
  else if(a==='club'){cid=id;cch=null;render()}
  else if(a==='clubnext')clubNext(id);
  else if(a==='newclub')newClub();
@@ -1343,6 +1392,7 @@ document.addEventListener('click',e=>{
  else if(a==='acct'){e.stopPropagation();acctMenu()}
  else if(a==='theme'){theme(el.dataset.k);refreshMenu()}
  else if(a==='gopro'){closeMenu();go('profile')}
+ else if(a==='gonotes'){closeMenu();go('notes')}
  else if(a==='signin'||a==='signup'){e.preventDefault();closeMenu();openAuth(a==='signup'?'up':'in')}
  else if(a==='signout'){closeMenu();cloudFlush().finally(async()=>{try{await cloud.sb.auth.signOut()}catch(x){}onSession(null)})}
  else if(a==='sendfb'){const ta=$('#fbtext');const t=ta.value.trim();if(!t)return ta.focus();db.feedback(t).then(()=>{ta.value='';toast('Thanks for the feedback')}).catch(fail)}
@@ -1352,6 +1402,7 @@ document.addEventListener('click',e=>{
  else if(a==='sample'){const add=seed().books.filter(x=>!bk(x.id));S.books.push(...add);normalize();save();toast(add.length?'Added '+add.length+' sample books':'Sample books are already in your library');render()}
  else if(a==='reset'){if(resetArm){S=seed();normalize();save();resetArm=0;toast('Demo data restored');render()}else{resetArm=1;el.textContent='Click again to confirm';setTimeout(()=>{resetArm=0;if(el.isConnected)el.textContent='Reset demo data'},3000)}}});
 document.addEventListener('change',e=>{const t=e.target;
+ if(t.dataset.p2==='disc'){S.profile.discoverable=t.checked;save();toast(t.checked?'Others can now find you by name':'Name search is off');return}
  if(t.id==='sortby'){S.sort=t.value;save();refreshRails();return}
  if(t.dataset.act==='chsel'){cch=+t.value;render();return}
  if(t.dataset.p){const p=S.profile;if(t.dataset.p==='priv')p.priv[t.dataset.k]=t.value;else p[t.dataset.p]=t.value;save();if(t.dataset.p==='name'||t.dataset.p==='vis')render();return}
@@ -1359,7 +1410,8 @@ document.addEventListener('change',e=>{const t=e.target;
   rd.onload=()=>{if(t.dataset.import==='csv')importGR(String(rd.result));
    else try{const j=JSON.parse(rd.result);if(!Array.isArray(j.books))throw 0;S=j;normalize();save();toast('Backup restored');render()}catch(x){toast('That backup could not be read')}};
   rd.readAsText(f)}});
-document.addEventListener('submit',e=>{const af=e.target.closest('[data-form="addfriend"]');if(af){e.preventDefault();const code=new FormData(af).get('code').trim();if(code)sendFriend(code);return}
+document.addEventListener('submit',e=>{const ff=e.target.closest('[data-form="findf"]');if(ff){e.preventDefault();const q=new FormData(ff).get('q').trim();if(!q)return;fq=q;if(/^[a-f0-9]{8}$/i.test(q)){sendFriend(q);return}db.find(q).then(r=>{fres=r;render()}).catch(fail);return}
+ const af=e.target.closest('[data-form="addfriend"]');if(af){e.preventDefault();const code=new FormData(af).get('code').trim();if(code)sendFriend(code);return}
  const f=e.target.closest('[data-form="post"]');if(!f)return;e.preventDefault();
  const cl=CLS().find(c=>c.id===cid),txt=new FormData(f).get('text').trim();if(!txt||!cl)return;
  if(cloud.user){db.post({club_id:cl.id,name:S.profile.name,ch:cch,text:txt}).then(r=>{cl.posts.push({id:r.id,ch:r.ch,who:r.name,uid:r.user_id,text:r.text,ts:r.created_at});render()}).catch(fail);return}
@@ -1367,7 +1419,7 @@ document.addEventListener('submit',e=>{const af=e.target.closest('[data-form="ad
 
 /* ---------- accounts, sync and live clubs ---------- */
 function openAuth(mode='in'){const up=mode==='up';
- fm.innerHTML=`<form class="fmbody" id="authf"><h4 style="font:700 22px Fraunces,Georgia,serif;margin:0 0 6px">${up?'Create your account':'Sign in'}</h4><p class="hint" style="margin:0 0 12px">${up?'Your shelves, ratings and clubs are saved to your account.':'Welcome back.'}</p>${up?'<div class="fld"><label>Display name<input name="name" required maxlength="40" autocomplete="nickname"></label></div>':''}<div class="fld"><label>Email<input name="email" type="email" required autocomplete="email"></label></div><div class="fld"><label>Password<input name="pw" type="password" required minlength="6" autocomplete="${up?'new-password':'current-password'}"></label></div><p class="autherr" role="alert" style="color:#c0392b;margin:0 0 8px;min-height:1em"></p><div class="acts"><button class="btn pri" type="submit">${up?'Create account':'Sign in'}</button><button class="btn" type="button" data-act="close-dlg">Cancel</button></div><p style="margin:14px 0 0;font-size:14px">${up?'Already have an account?':'New here?'} <a href="#" data-act="${up?'signin':'signup'}">${up?'Sign in':'Create an account'}</a></p></form>`;
+ fm.innerHTML=`<form class="fmbody" id="authf"><h4 style="font:700 22px Fraunces,Georgia,serif;margin:0 0 6px">${up?'Create your account':'Sign in'}</h4><p class="hint" style="margin:0 0 12px">${up?'Your shelves, ratings and clubs are saved to your account.':'Welcome back.'}</p>${up?'<div class="fld"><label>Display name<input name="name" required maxlength="40" autocomplete="nickname"></label></div>':''}<div class="fld"><label>Email<input name="email" type="email" required autocomplete="email"></label></div><div class="fld"><label>Password<input name="pw" type="password" required minlength="6" autocomplete="${up?'new-password':'current-password'}"></label></div>${up?'':'<p style="margin:-4px 0 10px"><button type="button" class="lnk" data-act="forgot">Forgot password?</button></p>'}<p class="autherr" role="alert" style="color:#c0392b;margin:0 0 8px;min-height:1em"></p><div class="acts"><button class="btn pri" type="submit">${up?'Create account':'Sign in'}</button><button class="btn" type="button" data-act="close-dlg">Cancel</button></div><p style="margin:14px 0 0;font-size:14px">${up?'Already have an account?':'New here?'} <a href="#" data-act="${up?'signin':'signup'}">${up?'Sign in':'Create an account'}</a></p></form>`;
  $('#authf',fm).onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),er=$('.autherr',fm),btn=$('button[type=submit]',fm);btn.disabled=true;er.textContent='';
   try{const r=await authSubmit(up?'up':'in',f.get('email').trim(),f.get('pw'),(f.get('name')||'').trim());
    if(r==='confirm'){er.style.color='inherit';er.textContent='Check your email to confirm your account, then sign in.';btn.disabled=false;return}
@@ -1377,7 +1429,7 @@ async function authSubmit(mode,email,pw,name){const a=cloud.sb.auth;
  if(mode==='up'){const{data,error}=await a.signUp({email,password:pw,options:{data:{name}}});if(error)throw error;if(!data.session)return 'confirm'}
  else{const{error}=await a.signInWithPassword({email,password:pw});if(error)throw error}}
 async function onSession(sess){
- if(!sess){cloud.user=null;cloud.clubs=[];cloud.friends=[];cloud.fcode='';profSig='';cloud.synced=false;S=cloud.on?blank():seed();normalize();store.set('readers.v1',S);cid=null;render();return}
+ if(!sess){cloud.user=null;cloud.clubs=[];cloud.friends=[];cloud.recs=[];cloud.fcode='';profSig='';cloud.synced=false;S=cloud.on?blank():seed();normalize();store.set('readers.v1',S);cid=null;render();return}
  if(cloud.user&&cloud.user.id===sess.user.id)return;
  cloud.ready=true;cloud.user=sess.user;cloud.synced=false;
  try{const d=await db.getData(),md=sess.user.user_metadata||{};
@@ -1406,28 +1458,134 @@ async function pollClubs(){if(!cloud.user||!cloud.synced||page!=='clubs'||docume
  const before=clubSig();try{await loadClubs()}catch(e){return}if(clubSig()!==before)render()}
 setInterval(pollClubs,15000);
 if(cloud.on){cloud.sb.auth.getSession().then(({data})=>{cloud.ready=true;onSession(data.session)}).catch(()=>{cloud.ready=true;onSession(null)});
- cloud.sb.auth.onAuthStateChange((ev,sess)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')setTimeout(()=>onSession(sess),0)})}
+ cloud.sb.auth.onAuthStateChange((ev,sess)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')setTimeout(()=>onSession(sess),0);if(ev==='PASSWORD_RECOVERY')setTimeout(openNewPw,500)})}
 
 
 /* ---------- friends ---------- */
 function sharedList(){const p=S.profile,v=(p.priv&&p.priv.finished)||p.vis;if(v==='private')return[];
- return S.books.filter(b=>b.shelf==='finished'&&b.rating!=null).slice(0,500).map(b=>({t:b.t,a:b.a,r:b.rating,tg:(b.tags||[]).slice(0,5),p:b.pages||0}))}
+ return S.books.filter(b=>b.shelf==='finished'&&b.rating!=null).slice(0,500).map(b=>({t:b.t,a:b.a,r:b.rating,tg:(b.tags||[]).slice(0,5),p:b.pages||0,f:b.fin||null}))}
 let profSig='';
-async function syncProfile(){if(!cloud.user)return;const shared=sharedList(),sig=JSON.stringify([S.profile.name,shared]);if(sig===profSig&&cloud.fcode)return;
- await db.putProfile(S.profile.name||'Reader',shared);profSig=sig;if(!cloud.fcode)cloud.fcode=(await db.myCode())||''}
-async function loadFriends(){if(!cloud.user)return;try{cloud.friends=await db.friends()}catch(e){}}
-async function sendFriend(code){try{const r=await db.reqFriend(code);await loadFriends();render();toast(r.status==='accepted'?'You are now friends with '+r.name:r.status==='pending'?'Request sent to '+r.name:'Already connected with '+r.name)}catch(e){fail(e)}}
+async function syncProfile(){if(!cloud.user)return;const shared=sharedList(),sig=JSON.stringify([S.profile.name,shared,!!S.profile.discoverable,S.profile.username||'']);if(sig===profSig&&cloud.fcode)return;
+ await db.putProfile(S.profile.name||'Reader',shared,S.profile.discoverable,S.profile.username);profSig=sig;if(!cloud.fcode)cloud.fcode=(await db.myCode())||''}
+async function loadFriends(){if(!cloud.user)return;try{cloud.friends=await db.friends()}catch(e){}try{cloud.recs=await db.recs()}catch(e){}}
+async function sendFriend(code){try{const r=await db.reqFriend(code);fq='';fres=[];await loadFriends();render();toast(r.status==='accepted'?'You are now friends with '+r.name:r.status==='pending'?'Request sent to '+r.name:'Already connected with '+r.name)}catch(e){fail(e)}}
 async function shareFriend(){if(!cloud.fcode)return;const url=location.origin+location.pathname+'?friend='+encodeURIComponent(cloud.fcode),text='Connect with me on Readers so we can share book picks. Tap the link to add me (code '+cloud.fcode+'):';
  try{if(navigator.share){await navigator.share({title:'Add me on Readers',text,url});return}}catch(x){if(x&&x.name==='AbortError')return}
  try{await navigator.clipboard.writeText(text+' '+url);toast('Friend link copied. Paste it into a text or email.')}catch(x){toast('Friend link: '+url)}}
 (function(){try{const u=new URL(location.href),c=u.searchParams.get('friend');if(c){store.set('readers.friend',c.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12));u.searchParams.delete('friend');history.replaceState(null,'',u.pathname+u.search+u.hash)}}catch(e){}})();
 async function runPendingFriend(){const code=store.get('readers.friend','');if(!code||!cloud.user||!cloud.synced)return;
  try{localStorage.removeItem('readers.friend')}catch(e){}
- try{const r=await db.reqFriend(code);await loadFriends();page='profile';$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p==='profile'));render();toast(r.status==='accepted'?'You are now friends with '+r.name:'Friend request sent to '+r.name)}catch(e){fail(e)}}
-const frSig=()=>(cloud.friends||[]).map(f=>f.id+f.status+(f.shared||[]).length).join('|');
-async function pollFriends(){if(!cloud.user||!cloud.synced||document.hidden||$('dialog[open]')||(page!=='profile'&&page!=='discover'))return;
+ try{const r=await db.reqFriend(code);await loadFriends();fid=null;go('friends');toast(r.status==='accepted'?'You are now friends with '+r.name:'Friend request sent to '+r.name)}catch(e){fail(e)}}
+const frSig=()=>(cloud.friends||[]).map(f=>f.id+f.status+(f.shared||[]).length).join('|')+'#'+(cloud.recs||[]).length;
+async function pollFriends(){if(!cloud.user||!cloud.synced||document.hidden||$('dialog[open]')||(page!=='profile'&&page!=='discover'&&page!=='friends'&&page!=='home'))return;
  const ae=document.activeElement;if(ae&&ae.tagName==='INPUT'&&ae.value)return;const b=frSig();await loadFriends();if(frSig()!==b)render()}
 setInterval(pollFriends,20000);
+
+/* ---------- Friends page, activity, checklist, nudges ---------- */
+var fid=null,fq='',fres=[],deferredInstall=null;
+function regCat(id,x){const c=CATID[id]||{id,t:x.t,a:x.a,tags:x.tg||x.tags||[],pages:x.p||x.pages||0};CATID[id]=c;return c}
+function accepted(){return (cloud.friends||[]).filter(f=>f.status==='accepted')}
+function friendBadge(){return (cloud.friends||[]).filter(f=>f.status==='pending'&&f.incoming).length}
+function friendURL(){return location.origin+location.pathname+'?friend='+encodeURIComponent(cloud.fcode)}
+function standalone(){try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}}
+function qrBox(text){if(typeof qrcode==='undefined')return '';try{const q=qrcode(0,'M');q.addData(text);q.make();return `<div class="qrbox" role="img" aria-label="QR code for your friend link">${q.createSvgTag({cellSize:4,margin:0,scalable:true})}</div>`}catch(e){return ''}}
+function frRow(av,name,sub,btns){return `<div class="frow"><span class="av">${esc(initials(av||'R'))}</span><span class="fn">${esc(name)}${sub?`<small class="fs">${esc(sub)}</small>`:''}</span>${btns}</div>`}
+function vFriends(){
+ if(!cloud.user)return `<div class="inner"><div class="card"><p style="margin:0">Sign in to find and connect with friends.</p></div></div>`;
+ const fr=cloud.friends||[],inc=fr.filter(f=>f.status==='pending'&&f.incoming),out=fr.filter(f=>f.status==='pending'&&!f.incoming),ok=accepted();
+ if(fid){const f=ok.find(x=>x.id===fid);if(f)return vFriend(f);fid=null}
+ const known=new Set(fr.map(f=>f.other)),seenU=new Set(),sug=[];
+ cloud.clubs.forEach(c=>c.members.forEach(m=>{if(m.uid&&!known.has(m.uid)&&!seenU.has(m.uid)){seenU.add(m.uid);sug.push({uid:m.uid,n:m.n,club:c.name})}}));
+ const link=cloud.fcode?friendURL():'';
+ return `<div class="inner" style="max-width:760px"><div class="pagehead"><div><h2>Friends</h2><p>Connect with friends to see what they loved, send each other books and compare taste.</p></div></div>
+ ${inc.length?`<section class="card sec"><h3 class="ct">Requests <small>${inc.length}</small></h3>${inc.map(f=>frRow(f.name,f.name,'',`<span class="fbt"><button class="btn pri" data-act="facc" data-id="${esc(f.id)}">Accept</button><button class="btn" data-act="fdec" data-id="${esc(f.id)}">Decline</button></span>`)).join('')}</section>`:''}
+ <section class="card sec"><h3 class="ct">Find a friend</h3><p class="hint" style="margin:0 0 10px">Search by name or @username, or paste a friend code.</p><form class="composer" data-form="findf"><input name="q" required maxlength="40" autocomplete="off" autocapitalize="none" placeholder="Name, @username or code" value="${esc(fq)}" aria-label="Find a friend"><button class="btn pri" type="submit">Search</button></form>
+  ${fq&&!fres.length?`<p class="hint" style="margin:10px 0 0">No readers found for "${esc(fq)}". They may not have turned on name search yet. Share your link or ask for their code.</p>`:''}
+  ${fres.map(r=>frRow(r.name,r.name,r.username?'@'+r.username:'',`<span class="fbt"><button class="btn pri" data-act="addcode" data-code="${esc(r.code)}">Add</button></span>`)).join('')}</section>
+ ${sug.length?`<section class="card sec"><h3 class="ct">People you may know</h3><p class="hint" style="margin:0 0 6px">From your book clubs.</p>${sug.map(s=>frRow(s.n,s.n,s.club,`<span class="fbt"><button class="btn" data-act="addm" data-uid="${esc(s.uid)}">Add</button></span>`)).join('')}</section>`:''}
+ <section class="card sec"><h3 class="ct">Your friends <small>${ok.length}</small></h3>${ok.length?ok.map(f=>frRow(f.name,f.name,(f.shared||[]).length+' finished books shared',`<span class="fbt"><button class="btn" data-act="fview" data-id="${esc(f.id)}">View</button></span>`)).join(''):'<p class="hint" style="margin:0">No friends yet. Search above, add someone from your clubs, or share your link.</p>'}
+  ${out.length?'<h4 class="fsub">Waiting for a reply</h4>'+out.map(f=>frRow(f.name,f.name,'',`<span class="fbt"><button class="btn" data-act="frem" data-id="${esc(f.id)}">Cancel</button></span>`)).join(''):''}</section>
+ <section class="card sec"><h3 class="ct">Share your link</h3>${link?`<div class="sharebox">${qrBox(link)}<div><p class="by" style="margin:0 0 10px">Friend code <b class="code">${esc(cloud.fcode)}</b></p><div class="btnrow" style="margin:0"><button class="btn pri" data-act="sharef">Share link</button><button class="btn" data-act="copyf">Copy code</button></div><p class="hint" style="margin:10px 0 0">Friends can scan the code or open your link.</p></div></div>`:'<p class="hint" style="margin:0">Your friend code is being set up. Try again in a moment.</p>'}</section>
+ <section class="card sec"><h3 class="ct">Privacy</h3><label style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-p2="disc"${S.profile.discoverable?' checked':''}> <span>Let people find me by name or username<br><small class="hint">Off by default. Friends only see finished books your Shelf privacy allows.</small></span></label>
+  <div class="fld" style="margin-top:12px"><label>Username <small class="hint">optional, 3 to 20 letters, numbers or underscores</small><input id="unin" maxlength="20" autocapitalize="none" autocomplete="off" value="${esc(S.profile.username||'')}" placeholder="yourname"></label></div><button class="btn" data-act="saveun">Save username</button></section></div>`}
+function vFriend(f){
+ const mine=new Map(S.books.filter(b=>b.shelf==='finished'&&b.rating!=null).map(b=>[b.id,b.rating])),sh=f.shared||[];
+ const both=sh.filter(x=>mine.has(key(x.t,x.a))),loved=both.filter(x=>x.r>=4&&mine.get(key(x.t,x.a))>=4).length;
+ const match=both.length>=3?Math.round(100-both.reduce((a,x)=>a+Math.abs(x.r-mine.get(key(x.t,x.a))),0)/both.length/4*100):null;
+ const have=new Set(S.books.map(b=>b.id).concat(S.dismissed));
+ const tip=sh.filter(x=>x.r>=4&&!have.has(key(x.t,x.a))).sort((a,b)=>b.r-a.r).slice(0,6);
+ return `<div class="inner" style="max-width:760px"><button class="lnk" data-act="fback" style="margin-bottom:10px">Back to Friends</button>
+ <div class="profhead"><span class="av big">${esc(initials(f.name))}</span><div><h2 style="text-align:left;margin:0">${esc(f.name)}</h2><p style="margin:4px 0 0;text-align:left">${sh.length} finished book${sh.length===1?'':'s'} shared</p></div></div>
+ <section class="card sec"><h3 class="ct">Taste match</h3>${match!==null?`<p class="match" style="margin:0"><b>${match}%</b> alike across the ${both.length} books you have both finished and rated. You both loved ${loved}.</p>`:`<p class="hint" style="margin:0">Finish and rate a few of the same books to see how alike your tastes are. You have ${both.length} in common so far.</p>`}
+ <div class="btnrow"><button class="btn pri" data-act="recto">Recommend a book</button><button class="btn danger" data-act="frem" data-id="${esc(f.id)}">Remove friend</button></div></section>
+ ${tip.length?`<section class="card sec"><h3 class="ct">Books ${esc(f.name)} loved</h3><p class="hint" style="margin:0 0 6px">Not on your shelves yet.</p>${tip.map(x=>{const id=key(x.t,x.a);regCat(id,x);return `<div class="frow"><span class="fn">${esc(x.t)}<small class="fs">${esc(x.a)} · rated ${x.r} of 5</small></span><span class="fbt"><button class="btn pri" data-act="rec-want" data-id="${esc(id)}">Want to Read</button></span></div>`}).join('')}</section>`:''}
+ <section class="card sec"><h3 class="ct">Everything ${esc(f.name)} finished</h3>${sh.length?sh.slice().sort((a,b)=>b.r-a.r).slice(0,40).map(x=>`<div class="frow"><span class="fn">${esc(x.t)}<small class="fs">${esc(x.a)}</small></span><span class="fbt"><small>${x.r} of 5${mine.has(key(x.t,x.a))?' · you '+mine.get(key(x.t,x.a)):''}</small></span></div>`).join(''):'<p class="hint" style="margin:0">Nothing shared yet.</p>'}</section></div>`}
+function recommendDialog(bid,fidd){const fr=accepted();if(!fr.length)return toast('Add a friend first');
+ const books=S.books.filter(b=>b.shelf==='finished'||b.shelf==='reading');if(!books.length)return toast('Finish or start a book first');
+ openForm('Recommend a book',`<div class="fld"><label>Friend<select name="f">${fr.map(f=>`<option value="${esc(f.id)}"${f.id===fidd?' selected':''}>${esc(f.name)}</option>`).join('')}</select></label></div><div class="fld"><label>Book<select name="b">${books.map(b=>`<option value="${esc(b.id)}"${b.id===bid?' selected':''}>${esc(b.t)}</option>`).join('')}</select></label></div><div class="fld"><label>Note <small class="hint">optional</small><textarea name="n" rows="2" maxlength="200" placeholder="Why you think they will love it" style="width:100%;box-sizing:border-box"></textarea></label></div>`,
+  fd=>{const f=fr.find(x=>x.id===fd.get('f')),b=bk(fd.get('b'));if(!f||!b)return;db.sendRec({to_user:f.other,from_name:S.profile.name||'A friend',title:b.t,author:b.a,tags:(b.tags||[]).slice(0,5),pages:b.pages||0,note:(fd.get('n')||'').trim().slice(0,200)}).then(()=>toast('Sent to '+f.name)).catch(fail)},'Send')}
+function actCard(){if(!cloud.user)return '';const have=new Set(S.books.map(b=>b.id).concat(S.dismissed)),items=[];
+ accepted().forEach(f=>(f.shared||[]).forEach(x=>{if(!x.f)return;const d=new Date(x.f+'T12:00:00');if(isNaN(d)||Date.now()-d>30*864e5)return;items.push({f,x,d})}));
+ items.sort((a,b)=>b.d-a.d);const top=items.slice(0,4);if(!top.length)return '';
+ return `<section class="card sec act"><h3 class="ct">Friend activity</h3>${top.map(({f,x,d})=>{const id=key(x.t,x.a);regCat(id,x);const days=Math.round((Date.now()-d)/864e5);return `<div class="frow"><span class="fn"><b>${esc(f.name)}</b> finished <i>${esc(x.t)}</i> and rated it ${x.r} of 5<small class="fs">${days<=0?'today':days===1?'yesterday':days+' days ago'}</small></span>${have.has(id)?'':`<span class="fbt"><button class="btn" data-act="rec-want" data-id="${esc(id)}">Want to Read</button></span>`}</div>`}).join('')}</section>`}
+function nudgeCard(){if(!cloud.user)return '';let worst=null;
+ cloud.clubs.forEach(c=>{const b=bk(c.bookId),me=b?b.cur:c.myCh;c.members.forEach(m=>{const gap=m.ch-me;if(gap>0&&(!worst||gap>worst.gap))worst={gap,c,n:m.n}})});
+ if(!worst)return '';
+ return `<section class="card sec nudge"><div><b>${esc(worst.n)} is ${worst.gap} chapter${worst.gap===1?'':'s'} ahead of you</b><p class="hint" style="margin:2px 0 0;text-align:left">in ${esc(worst.c.name)}. Catch up to join the chapter discussions.</p></div><button class="btn pri" data-act="gocl" data-id="${esc(worst.c.id)}">Open club</button></section>`}
+function nudgeLine(cl,me){if(!cl.members.length)return '';const lead=cl.members.reduce((a,m)=>m.ch>a.ch?m:a,cl.members[0]),g=lead.ch-me;
+ return `<p class="by nudgeln" style="margin:4px 0 0">${g>0?esc(lead.n)+' is '+g+' chapter'+(g===1?'':'s')+' ahead of you.':me>lead.ch?'You are leading the group.':'You are right with the group.'}</p>`}
+function checklist(){if(S.onbHide||!cloud.user)return '';
+ const CK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+ const st=[[S.books.length>=3,'Add 3 books to your shelf','shelf','Open My Shelf'],[S.books.some(b=>b.rating!=null),'Rate a book you have read','shelf','Rate a book'],[CLS().length>0,'Join or start a book club','clubs','Open Clubs'],[accepted().length>0,'Connect with a friend','friends','Find friends']];
+ const done=st.filter(x=>x[0]).length;if(done===st.length)return '';
+ return `<section class="card sec check"><div class="pagehead" style="margin:0 0 8px"><h3 class="ct" style="margin:0">Getting started <small>${done} of ${st.length}</small></h3><button class="lnk" data-act="hidecheck">Hide</button></div><div class="bar" style="margin:0 0 10px"><i style="width:${done/st.length*100}%;background:var(--page-green);display:block;height:100%"></i></div>${st.map(([d,t,g,b])=>`<div class="frow ck${d?' done':''}"><span class="ckb" aria-hidden="true">${d?CK:''}</span><span class="fn">${esc(t)}</span>${d?'':`<span class="fbt"><button class="btn" data-go="${g}">${b}</button></span>`}</div>`).join('')}</section>`}
+function forgotPw(){const f=$('#authf',fm),em=f&&f.elements.email.value.trim(),er=$('.autherr',fm);
+ if(!em){er.style.color='#c0392b';er.textContent='Enter your email above, then tap Forgot password.';return}
+ cloud.sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname}).then(({error})=>{if(error)throw error;er.style.color='inherit';er.textContent='If that email has an account, a reset link is on its way.'}).catch(x=>{er.style.color='#c0392b';er.textContent=(x&&x.message)||'Could not send the email'})}
+function openNewPw(){fm.innerHTML=`<form class="fmbody" id="npf"><h4 style="font:700 22px Fraunces,Georgia,serif;margin:0 0 6px">Set a new password</h4><p class="hint" style="margin:0 0 12px">Choose a new password for your account.</p><div class="fld"><label>New password<input name="pw" type="password" required minlength="6" autocomplete="new-password"></label></div><p class="autherr" role="alert" style="color:#c0392b;margin:0 0 8px;min-height:1em"></p><div class="acts"><button class="btn pri" type="submit">Save password</button></div></form>`;
+ $('#npf',fm).onsubmit=async e=>{e.preventDefault();const er=$('.autherr',fm);try{const{error}=await cloud.sb.auth.updateUser({password:new FormData(e.target).get('pw')});if(error)throw error;fm.close();toast('Password updated')}catch(x){er.textContent=(x&&x.message)||'Could not update password'}};if(!fm.open)fm.showModal()}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e});
+function installApp(){closeMenu();if(deferredInstall){deferredInstall.prompt();deferredInstall=null;return}
+ fm.innerHTML=`<form method="dialog" class="fmbody"><h4 style="font:700 22px Fraunces,Georgia,serif;margin:0 0 10px">Install Readers</h4><p style="margin:0 0 8px"><b>iPhone or iPad:</b> tap the Share button in Safari, then Add to Home Screen.</p><p style="margin:0 0 14px"><b>Android:</b> open your browser menu and choose Install app or Add to Home screen.</p><div class="acts"><button class="btn pri">Got it</button></div></form>`;fm.showModal()}
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+
+/* ---------- release notes ---------- */
+ const RELEASES=[
+ {id:'2026-11-26b',date:'November 26, 2026',title:'Easier friends and everyday polish',items:[
+  ['New','A Friends page, found in your profile menu. Search by name or @username, add people from your book clubs, see friend requests, and share a QR code or link. Name search is off until you turn it on.'],
+  ['New','Tap a friend to see their taste match, the books they loved that you have not read, and what they finished. You can send them a book with a note too.'],
+  ['New','Friend activity on Home shows what your friends finished lately. Books sent to you appear at the top of Discover.'],
+  ['New','Forgot password. Tap it on the sign in screen and we will email you a reset link.'],
+  ['New','Install Readers on your phone from the profile menu so it opens like an app from your home screen.'],
+  ['New','A Getting started checklist on Home for new accounts, and club check ins that tell you when friends are ahead of you.'],
+  ['Improved','Undo. Removed a book, a note, or a pick by mistake? Tap Undo in the message that appears.']]},
+ {id:'2026-11-26',date:'November 26, 2026',title:'Friends, themes and smarter picks',items:[
+  ['New','Friends. Open your profile menu or the Friends card on Profile to share your friend code or link. When a friend accepts, the books they loved can show up in your Discover tab.'],
+  ['New','Discover now has lanes: Because you loved, Stretch picks, Something different, and Friends loved these. Stretch picks take you to a new genre with a feel you already enjoy, and each pick explains why it is there.'],
+  ['New','Not for me and Want to Read now teach Readers your taste. Skip a genre twice and it stops showing up in your stretch lanes.'],
+  ['New','Three more themes in your profile menu: Night reader (warm and dim, easy on tired eyes), Sepia paper, and Christmas.'],
+  ['New','Club invite links. Tap Share invite on a club and your friend can join automatically after they sign up.'],
+  ['Improved','The profile menu now holds your account, themes and sign out in one place. Signed out visitors can sign in from the same spot.'],
+  ['Improved','Discover shows a locked card with a progress bar until you have finished 10 books, so you know what is coming.'],
+  ['Improved','The built in book list grew from 30 to 69 books across more genres.'],
+  ['Fixed','The recommendations button was hidden behind the bottom tab bar on phones.']]},
+ {id:'2026-11-25',date:'November 25, 2026',title:'Accounts, real book clubs and mobile',items:[
+  ['New','Create an account and your shelves, ratings and notes are saved online. Every new account starts fresh and empty.'],
+  ['New','Real book clubs. Start a club, share the invite code, and friends join with it. Discussion is chapter by chapter, and chapters you have not reached stay locked so nobody gets spoilers.'],
+  ['New','A phone friendly layout with a bottom tab bar. Your reading stats are under Profile on phones.'],
+  ['Improved','Signed out visitors see a short welcome screen instead of anyone else\'s books.']]},
+ {id:'2026-11-24',date:'Earlier',title:'Ratings and notes',items:[
+  ['New','Romance books are rated with chili peppers. Every other genre uses stars.'],
+  ['New','Choose how you rank a book: overall, or by plot, characters, world building or ending. Sort your shelf by any of them and see a Top ranked row.'],
+  ['New','Hover over any cover to see when you started and finished the book. On phones the dates show under the cover.'],
+  ['New','Add as many notes to a book as you like. They stay in the order you wrote them, and you can remove any note.']]}];
+const seenRel=()=>store.get('readers.seen','');
+const hasNew=()=>seenRel()!==RELEASES[0].id;
+function vNotes(){store.set('readers.seen',RELEASES[0].id);document.body.dataset.new='';
+ const TAG={New:'tg-new',Improved:'tg-imp',Fixed:'tg-fix'};
+ return `<div class="inner" style="max-width:760px"><div class="pagehead"><div><h2>Release notes</h2><p>What is new in Readers. Read at your own pace, newest first.</p></div></div>
+ ${RELEASES.map((r,i)=>`<details class="rel"${i<2?' open':''}><summary><span class="rd">${esc(r.date)}</span><span class="rt">${esc(r.title)}</span>${i===0?'<span class="rnew">Latest</span>':''}</summary><ul>${r.items.map(([t,x])=>`<li><span class="tag ${TAG[t]||''}">${esc(t)}</span><span>${esc(x)}</span></li>`).join('')}</ul></details>`).join('')}
+ <p class="hint" style="margin-top:18px">Something confusing or missing? Tell us in the feedback box on your <button class="lnk" data-go="profile">profile page</button>.</p></div>`}
 
 /* ---------- invites, auto join and the account button ---------- */
 const inviteURL=c=>location.origin+location.pathname+'?join='+encodeURIComponent(c);
@@ -1447,10 +1605,12 @@ const THEMES=[
  {k:'christmas',n:'Christmas',d:'Evergreen, red and gold',t:'dark',s:'christmas',sw:['#0F2A1F','#B3262E']}];
 const curTheme=()=>document.body.dataset.tk||'light';
 function menuHTML(){const cur=curTheme(),u=cloud.user;
- const top=u?`<div class="am-who"><b>${esc(S.profile.name||'Reader')}</b><small>${esc(u.email||'')}</small></div><button class="am-i" role="menuitem" data-act="gopro">Profile and settings</button>`
+ const top=u?`<div class="am-who"><b>${esc(S.profile.name||'Reader')}</b><small>${esc(u.email||'')}</small></div><button class="am-i" role="menuitem" data-act="gopro">Profile and settings</button><button class="am-i am-r" role="menuitem" data-act="gofriends">Friends${friendBadge()?'<span class="rnew">'+friendBadge()+'</span>':''}</button>`
   :cloud.on?`<button class="am-i am-b" role="menuitem" data-act="signin">Sign in</button><button class="am-i" role="menuitem" data-act="signup">Create account</button>`:'';
  const th=`<div class="am-lbl">Theme</div>`+THEMES.map(x=>`<button class="am-i am-t" role="menuitemradio" aria-checked="${x.k===cur}" data-act="theme" data-k="${x.k}"><span class="sw" style="background:linear-gradient(135deg,${x.sw[0]} 50%,${x.sw[1]} 50%)"></span><span class="tn"><b>${x.n}</b><small>${x.d}</small></span>${x.k===cur?'<svg class="ck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>':''}</button>`).join('');
- return top+(top?'<div class="am-sep"></div>':'')+th+(u?'<div class="am-sep"></div><button class="am-i" role="menuitem" data-act="signout">Sign out</button>':'')}
+ const rel=`<button class="am-i am-r" role="menuitem" data-act="gonotes">Release notes${hasNew()?'<span class="rnew">New</span>':''}</button>`;
+ const inst=standalone()?'':'<button class="am-i" role="menuitem" data-act="installapp">Install app</button>';
+ return top+rel+inst+'<div class="am-sep"></div>'+th+(u?'<div class="am-sep"></div><button class="am-i" role="menuitem" data-act="signout">Sign out</button>':'')}
 function acctMenu(){if($('#acctmenu'))return closeMenu();
  const m=document.createElement('div');m.id='acctmenu';m.setAttribute('role','menu');m.innerHTML=menuHTML();$('header').appendChild(m)}
 function refreshMenu(){const m=$('#acctmenu');if(m)m.innerHTML=menuHTML()}
