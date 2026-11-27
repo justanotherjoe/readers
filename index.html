@@ -892,6 +892,17 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .res .resact select{flex:1;min-width:0;min-height:40px;font-size:14px;padding:6px 10px;border-radius:10px}
 .res .resact button{min-height:40px;padding:6px 18px;border-radius:10px;font-weight:600;font-size:14px}
 .res .resact button:disabled{opacity:.7}
+.row h3 .fold{display:inline-flex;align-items:baseline;gap:8px;background:none;border:0;padding:4px 6px 4px 0;margin:0;font:inherit;color:inherit;cursor:pointer;text-align:left;border-radius:8px}
+.row h3 .fold .chv{align-self:center;flex:none;transition:transform .15s;color:var(--page-sub)}
+.row.shut h3 .fold .chv{transform:rotate(-90deg)}
+.row.shut{margin-bottom:8px}
+.row h3 .fold:hover .chv{color:var(--page-text)}
+.ordlist{display:flex;flex-direction:column;gap:8px}
+.ord{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surf);cursor:grab}
+.ord.dragging{opacity:.45}
+.ord .grip{color:var(--page-sub);display:grid;place-items:center;flex:none}
+.ord .on{flex:1;min-width:0;display:flex;flex-direction:column}.ord .on b{font:700 16px 'Space Grotesk',system-ui,sans-serif}.ord .on small{color:var(--page-sub);font-size:13px}
+.ord .mv{min-width:44px;min-height:44px;padding:0;font-size:20px;line-height:1}
 </style>
 </head>
 <body data-theme="light">
@@ -1123,7 +1134,7 @@ function seed(){
 }
 let S=store.get('readers.v1',null);
 if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
-function normalize(){S.onbHide=!!S.onbHide;S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
+function normalize(){S.onbHide=!!S.onbHide;S.fold=S.fold||{};S.order=Array.isArray(S.order)?S.order:[];S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
 let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>store.set('readers.v1',S),150);cloudSoon()};
@@ -1229,7 +1240,7 @@ const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('
 let page='home';
 const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile(),notes:()=>vNotes(),friends:()=>vFriends()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
-function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=S.notif.friends&&(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';refreshNotif();document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';main.innerHTML='<div class="page">'+(g||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
+function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=S.notif.friends&&(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';refreshNotif();document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';main.innerHTML='<div class="page">'+(g||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf'){shelfEdit=false;wireSearch();syncFoldAll()}}
 const phone=()=>matchMedia('(max-width:700px),(hover:none) and (max-width:900px)').matches;
 function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&(p==='stats'||p==='notes'||p==='friends')&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
 $$('.book').forEach(b=>b.onclick=()=>{
@@ -1245,7 +1256,8 @@ function toast(m,undo){let t=$('.toast');if(!t){t=document.createElement('div');
 function coverBtn(b){const p=progress(b),k=method(b);
  const cap=b.shelf==='reading'?`<span class="dt">${p}% read</span>`:`${b.rating?`<span class="mini">${iconsRow(k,b.rating)}</span>`:''}<span class="dt">${b.shelf==='finished'?(b.fin?fmtD(b.fin):'Finished'):b.shelf==='dnf'?'Did not finish':b.started?'Started '+fmtD(b.started):''}</span>`;
  return `<div class="cw"><button class="cover" data-act="book" data-id="${esc(b.id)}" ${cvAttrs(b)} style="background:${col(b)}"><i>${esc(b.a)}</i><b>${esc(b.t)}</b>${b.shelf==='reading'?`<div class="prog"><span style="width:${p}%"></span></div>`:''}<div class="info"><strong>${esc(b.t)}</strong>${b.shelf==='reading'?`<span class="dt">${p}% read</span>`:''}${b.rating?`<span class="mini">${iconsRow(k,b.rating)}</span>`:''}${datesHTML(b)}</div></button><div class="cap">${cap}</div></div>`}
-function rail(name,count,books,extra=''){return `<section class="row"><h3>${esc(name)} <small>${count}</small>${extra}</h3><div class="rail"><button class="arrow l" aria-label="Scroll left" data-act="scroll" data-d="-1">‹</button><div class="track">${books.length?books.map(coverBtn).join(''):'<p class="hint">Nothing here yet.</p>'}</div><button class="arrow r" aria-label="Scroll right" data-act="scroll" data-d="1">›</button></div></section>`}
+function rail(name,count,books,extra=''){const shut=!!(S.fold||{})[name];
+ return `<section class="row${shut?' shut':''}"><h3><button type="button" class="fold" data-act="fold" data-k="${esc(name)}" aria-expanded="${!shut}"><svg class="chv" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>${esc(name)}</span> <small>${count}</small></button>${extra}</h3>`+(shut?'':`<div class="rail"><button class="arrow l" aria-label="Scroll left" data-act="scroll" data-d="-1">‹</button><div class="track">${books.length?books.map(coverBtn).join(''):'<p class="hint">Nothing here yet.</p>'}</div><button class="arrow r" aria-label="Scroll right" data-act="scroll" data-d="1">›</button></div>`)+`</section>`}
 const nb=n=>n+(n===1?' book':' books');
 function recCard(r,actions=true){const c=r.c;return `<article class="rc"><div class="cv2" ${cvAttrs(c)} style="background-color:${col(c)}"></div><div><h4>${esc(c.t)}</h4><div class="sub">${esc(c.a)} · ${c.pages} pages</div><div class="why">${r.why}</div><div class="tags">${c.tags.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${actions?`<div class="acts"><button class="btn pri" data-act="rec-want" data-id="${esc(c.id)}">Want to Read</button><button class="btn" data-act="rec-no" data-id="${esc(c.id)}">Not for me</button></div>`:''}</div></article>`}
 const meter=(n,of)=>`<div class="meter"><div class="bar"><i style="width:${Math.min(100,n/of*100)}%"></i></div><small>${n} of ${of} books logged</small></div>`;
@@ -1281,15 +1293,30 @@ const SORTS=[['recent','Recently added'],['rating','Top rated overall'],...CATS.
 const metric=(b,m)=>m==='rating'?b.rating:(b.cats||{})[m];
 function sorted(list){const m=S.sort;if(m==='title')return list.slice().sort((a,b)=>a.t.localeCompare(b.t));if(m==='author')return list.slice().sort((a,b)=>a.a.localeCompare(b.a));
  if(m==='recent')return list;return list.slice().sort((a,b)=>(metric(b,m)||-1)-(metric(a,m)||-1))}
+let shelfEdit=false,shelfKeys=[];
+function orderItems(items){const o=S.order||[],by=new Map(items.map(x=>[x.k,x]));const first=o.filter(k=>by.has(k)).map(k=>by.get(k)),rest=items.filter(x=>!o.includes(x.k));return first.concat(rest)}
 function railsHTML(){
  const fin=onShelf('finished').sort(byFin),fy=fin.filter(b=>b.fin&&b.fin.startsWith(YEAR));
- const m=['rating',...CATS.map(c=>c[0])].includes(S.sort)?S.sort:'rating',top=S.books.filter(b=>metric(b,m)).sort((a,b)=>metric(b,m)-metric(a,m)).slice(0,10);
- return (top.length?rail('Top ranked',m==='rating'?'by overall rating':'by '+(CATS.find(c=>c[0]===m)||[0,m])[1].toLowerCase(),top):'')+
- rail(SH.reading,nb(onShelf('reading').length),sorted(onShelf('reading')))+rail(SH.want,nb(onShelf('want').length),sorted(onShelf('want')))+
- rail('Finished in '+YEAR,nb(fy.length),sorted(fy))+(fin.length>fy.length?rail('Finished earlier or undated',nb(fin.length-fy.length),sorted(fin.filter(b=>!fy.includes(b)))):'')+
- S.custom.map(n=>{const l=S.books.filter(b=>b.custom.includes(n));return rail(n,'Custom shelf · '+nb(l.length),sorted(l))}).join('')+
- rail(SH.dnf,nb(onShelf('dnf').length),sorted(onShelf('dnf')))}
-function vShelf(){return `<div class="inner"><div class="pagehead"><div><h2>My Shelf</h2><p>Your shelves, your rules. Open any book to rate it, move it or add notes.</p></div><div class="hdacts"><label class="sortl">Sort <select id="sortby">${SORTS.map(([k,l])=>`<option value="${k}"${S.sort===k?' selected':''}>${l}</option>`).join('')}</select></label><button class="btn" data-act="newshelf">New shelf</button></div></div></div><div class="search"><input id="q" type="search" placeholder="Search any book or author" autocomplete="off" aria-label="Search books"><div class="results" id="results"></div></div><div id="rails">${railsHTML()}</div>`}
+ const m=['rating',...CATS.map(c=>c[0])].includes(S.sort)?S.sort:'rating',top=S.books.filter(b=>metric(b,m)).sort((a,b)=>metric(b,m)-metric(a,b)).slice(0,10);
+ const items=[],add=(name,count,books)=>items.push({k:name,count,html:rail(name,count,books)});
+ if(top.length)add('Top ranked',m==='rating'?'by overall rating':'by '+(CATS.find(c=>c[0]===m)||[0,m])[1].toLowerCase(),top);
+ add(SH.reading,nb(onShelf('reading').length),sorted(onShelf('reading')));add(SH.want,nb(onShelf('want').length),sorted(onShelf('want')));
+ add('Finished in '+YEAR,nb(fy.length),sorted(fy));
+ if(fin.length>fy.length)add('Finished earlier or undated',nb(fin.length-fy.length),sorted(fin.filter(b=>!fy.includes(b))));
+ S.custom.forEach(n=>{const l=S.books.filter(b=>b.custom.includes(n));add(n,'Custom shelf · '+nb(l.length),sorted(l))});
+ add(SH.dnf,nb(onShelf('dnf').length),sorted(onShelf('dnf')));
+ const ord=orderItems(items);shelfKeys=ord.map(x=>x.k);
+ if(!shelfEdit)return ord.map(x=>x.html).join('');
+ return `<div class="inner"><p class="hint" style="margin:0 0 12px">Use the arrows or drag a shelf to change the order. Your choice is saved.</p><div class="ordlist">${ord.map((x,i)=>`<div class="ord" draggable="true" data-k="${esc(x.k)}"><span class="grip" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span><span class="on"><b>${esc(x.k)}</b><small>${esc(x.count)}</small></span><button class="btn mv" data-act="mv" data-k="${esc(x.k)}" data-d="-1" aria-label="Move ${esc(x.k)} up"${i===0?' disabled':''}>↑</button><button class="btn mv" data-act="mv" data-k="${esc(x.k)}" data-d="1" aria-label="Move ${esc(x.k)} down"${i===ord.length-1?' disabled':''}>↓</button></div>`).join('')}</div><p style="margin:14px 0 0"><button class="lnk" data-act="resetorder">Reset to default order</button></p></div>`}
+function vShelf(){return `<div class="inner"><div class="pagehead"><div><h2>My Shelf</h2><p>Your shelves, your rules. Open any book to rate it, move it or add notes.</p></div><div class="hdacts"><label class="sortl">Sort <select id="sortby">${SORTS.map(([k,l])=>`<option value="${k}"${S.sort===k?' selected':''}>${l}</option>`).join('')}</select></label><button class="btn" id="foldall" data-act="foldall">Collapse all</button><button class="btn" id="reorderbtn" data-act="reorder">Reorder</button><button class="btn" data-act="newshelf">New shelf</button></div></div></div><div class="search"><input id="q" type="search" placeholder="Search any book or author" autocomplete="off" aria-label="Search books"><div class="results" id="results"></div></div><div id="rails">${railsHTML()}</div>`}
+
+let dragK=null;
+document.addEventListener('dragstart',e=>{const r=e.target.closest&&e.target.closest('.ord');if(!r)return;dragK=r.dataset.k;r.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',dragK)}catch(x){}});
+document.addEventListener('dragover',e=>{if(dragK&&e.target.closest&&e.target.closest('.ord'))e.preventDefault()});
+document.addEventListener('dragend',()=>{dragK=null;$$('.ord.dragging').forEach(x=>x.classList.remove('dragging'))});
+document.addEventListener('drop',e=>{const r=e.target.closest&&e.target.closest('.ord');if(!r||!dragK)return;e.preventDefault();const to=r.dataset.k;if(to===dragK){dragK=null;return}
+ const a2=shelfKeys.filter(k=>k!==dragK),i=a2.indexOf(to),from=shelfKeys.indexOf(dragK),toI=shelfKeys.indexOf(to);a2.splice(from<toI?i+1:i,0,dragK);S.order=a2;dragK=null;save();refreshRails()});
+function syncFoldAll(){const rb=$('#reorderbtn');if(rb)rb.textContent=shelfEdit?'Done':'Reorder';const b=$('#foldall');if(!b)return;b.hidden=shelfEdit;const ks=$$('#rails .fold').map(x=>x.dataset.k);b.textContent=ks.some(k=>!S.fold[k])?'Collapse all':'Expand all'}
 function refreshRails(){const r=$('#rails');if(r){r.innerHTML=railsHTML();lazy(r)}}
 const qcache=new Map();let sAbort,sTimer,lastRes=[];
 async function searchBooks(q,signal){if(qcache.has(q))return qcache.get(q);let res=[];
@@ -1486,6 +1513,11 @@ document.addEventListener('click',e=>{
  else if(a==='remove'){const ob=bk(id),oi=S.books.indexOf(ob);S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed '+(ob?ob.t:'book'),()=>{if(ob&&!bk(id)){S.books.splice(Math.min(oi,S.books.length),0,ob);save();render()}});render()}
  else if(a==='newshelf')openForm('New shelf','<div class="fld"><label>Shelf name<input name="name" required maxlength="30" placeholder="Beach reads"></label></div>',fd=>{const n=fd.get('name').trim();if(n&&!S.custom.includes(n)&&!Object.values(SH).includes(n)){S.custom.push(n);save();refreshRails();toast('Created '+n)}},'Create shelf');
  else if(a==='sadd')searchAdd(el);
+ else if(a==='fold'){const k=el.dataset.k;S.fold[k]=!S.fold[k];save();refreshRails();const f=$('#rails .fold[data-k="'+k.replace(/"/g,'\\"')+'"]');if(f)f.focus();syncFoldAll()}
+ else if(a==='reorder'){shelfEdit=!shelfEdit;refreshRails();syncFoldAll()}
+ else if(a==='mv'){const k=el.dataset.k,d=+el.dataset.d,i=shelfKeys.indexOf(k),j=i+d;if(i<0||j<0||j>=shelfKeys.length)return;const a2=shelfKeys.slice();[a2[i],a2[j]]=[a2[j],a2[i]];S.order=a2;save();refreshRails();const nb2=$('#rails .mv[data-k="'+k.replace(/"/g,'\\"')+'"][data-d="'+d+'"]');if(nb2&&!nb2.disabled)nb2.focus()}
+ else if(a==='resetorder'){S.order=[];save();refreshRails()}
+ else if(a==='foldall'){const ks=$$('#rails .fold').map(x=>x.dataset.k),some=ks.some(k=>!S.fold[k]);ks.forEach(k=>{S.fold[k]=some});save();refreshRails();syncFoldAll()}
  else if(a==='sprev')searchPreview(+el.dataset.i);
  else if(a==='sadd2')searchAdd2(el);
  else if(a==='mood'){dm=el.dataset.m;render()}
@@ -1692,6 +1724,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
   ['New','Share a club invite straight to your friends. Pick everyone or just the ones you choose, and they can join from Home or Clubs in one tap.'],
   ['New','A notification bell shows friend requests, club invites, book recommendations and club activity in one place. Choose what you want to see in Profile, under Notifications.'],
   ['Improved','Book search results show the full title and author, and tapping a result opens a preview with a bigger cover and a description so you can be sure it is the right book.'],
+  ['New','Shelves on My Shelf can be collapsed and expanded, and Readers remembers how you left them, even on your other devices. Use Collapse all to keep just the shelf you care about open. Tap Reorder to move shelves up or down, or drag them on a computer, and Readers remembers your order.'],
   ['Improved','Softer cards, clearer buttons and easier to read text throughout.'],
   ['Improved','Home puts your current book first, with your checklist and friend activity beside it.']]},
  {id:'2026-11-26b',date:'November 26, 2026',title:'Easier friends and everyday polish',items:[
