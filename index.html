@@ -915,6 +915,8 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .pgform{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
 .pgform label{display:flex;align-items:center;gap:8px;font-weight:600}
 .pgform input{width:100px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:inherit;font:inherit}
+.delsh{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--page-orange,#c0431f);cursor:pointer}
+.delsh:hover,.delsh:focus-visible{background:color-mix(in srgb,var(--page-orange,#c0431f) 14%,transparent)}
 </style>
 </head>
 <body data-theme="light">
@@ -1318,7 +1320,7 @@ function railsHTML(){
  add(SH.reading,nb(onShelf('reading').length),sorted(onShelf('reading')));add(SH.want,nb(onShelf('want').length),sorted(onShelf('want')));
  add('Finished in '+YEAR,nb(fy.length),sorted(fy));
  if(fin.length>fy.length)add('Finished earlier or undated',nb(fin.length-fy.length),sorted(fin.filter(b=>!fy.includes(b))));
- S.custom.forEach(n=>{const l=S.books.filter(b=>b.custom.includes(n));add(n,'Custom shelf · '+nb(l.length),sorted(l))});
+ S.custom.forEach(n=>{const l=S.books.filter(b=>b.custom.includes(n));items.push({k:n,count:'',html:rail(n,'Custom shelf · '+nb(l.length),sorted(l),`<button type="button" class="delsh" data-act="delshelf" data-k="${esc(n)}" aria-label="Delete shelf ${esc(n)}" title="Delete shelf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></button>`)})});
  add(SH.dnf,nb(onShelf('dnf').length),sorted(onShelf('dnf')));
  const ord=orderItems(items);shelfKeys=ord.map(x=>x.k);
  if(!shelfEdit)return ord.map(x=>x.html).join('');
@@ -1530,6 +1532,7 @@ document.addEventListener('click',e=>{
  else if(a==='finish'&&b){setShelf(b,'finished');render();openBook(id);toast('Marked as finished. Add a rating.')}
  else if(a==='openq'){QR=topPicks();qi=0;renderQ();dq.showModal()}
  else if(a==='remove'){const ob=bk(id),oi=S.books.indexOf(ob);S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed '+(ob?ob.t:'book'),()=>{if(ob&&!bk(id)){S.books.splice(Math.min(oi,S.books.length),0,ob);save();render()}});render()}
+ else if(a==='delshelf'){const n=el.dataset.k,c=S.books.filter(x=>x.custom.includes(n)).length;openForm('Delete shelf?',`<p style="margin:0">Delete <b>${esc(n)}</b>? ${c?'The '+(c===1?'1 book':c+' books')+' on it will stay in your library, they just will not be on this shelf.':'It has no books on it.'} This cannot be undone.</p>`,()=>{S.custom=S.custom.filter(x=>x!==n);S.books.forEach(x=>{x.custom=x.custom.filter(y=>y!==n)});delete S.fold[n];S.order=S.order.filter(x=>x!==n);if(S.profile.priv)delete S.profile.priv['c:'+n];save();render();toast('Deleted shelf '+n)},'Delete shelf')}
  else if(a==='newshelf')openForm('New shelf','<div class="fld"><label>Shelf name<input name="name" required maxlength="30" placeholder="Beach reads"></label></div>',fd=>{const n=fd.get('name').trim();if(n&&!S.custom.includes(n)&&!Object.values(SH).includes(n)){S.custom.push(n);save();refreshRails();toast('Created '+n)}},'Create shelf');
  else if(a==='sadd')searchAdd(el);
  else if(a==='fold'){const k=el.dataset.k;S.fold[k]=!S.fold[k];save();refreshRails();const f=$('#rails .fold[data-k="'+k.replace(/"/g,'\\"')+'"]');if(f)f.focus();syncFoldAll()}
@@ -1739,6 +1742,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
  const RELEASES=[
  {id:'2026-11-27',date:'November 27, 2026',title:'A fresh new look',items:[
   ['New','A new welcome page that explains what Readers is for: tracking your reading and starting book clubs without spoilers.'],
+  ['New','You can now delete a custom shelf you no longer need. Your books stay in your library.'],
   ['New','Track progress by chapters or by page. Switch any time in a book\'s details. Both keep your percentage up to date, and page numbers are the most exact.'],
   ['New','On computers, navigation is now a clean sidebar that matches the phone tab bar. The bookshelf is retired.'],
   ['New','Share a club invite straight to your friends. Pick everyone or just the ones you choose, and they can join from Home or Clubs in one tap.'],
