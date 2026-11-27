@@ -881,6 +881,17 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 @media (max-width:700px),(hover:none) and (max-width:900px){#notifmenu{top:52px;right:10px;position:fixed}#bell{width:34px;height:34px}}
 @media (min-width:901px) and (hover:hover),(min-width:1101px){#notifmenu{position:fixed;top:64px;right:28px}}
 #acctmenu .am-th .chv{flex:none;color:var(--page-sub);transition:transform .15s}#acctmenu .am-th[aria-expanded=true] .chv{transform:rotate(180deg)}#acctmenu .am-th[aria-expanded=true]~.am-t{padding-left:22px}
+.res{display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:12px}
+.res .resmain{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;background:transparent;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;border-radius:10px}
+.res .resmain:hover .tx b,.res .resmain:focus-visible .tx b{text-decoration:underline}
+.res .th{display:block;width:64px;height:96px;flex:none;border-radius:6px;background:#7C9A5E center/cover no-repeat;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.res .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.res .tx b{white-space:normal;overflow:visible;text-overflow:clip;font:700 16px/1.25 'Space Grotesk',system-ui,sans-serif}
+.res .tx small{display:block;font-size:13px}.res .tx .more{color:var(--page-orange);font-weight:600;margin-top:2px}
+.res .resact{display:flex;gap:8px;align-items:center}
+.res .resact select{flex:1;min-width:0;min-height:40px;font-size:14px;padding:6px 10px;border-radius:10px}
+.res .resact button{min-height:40px;padding:6px 18px;border-radius:10px;font-weight:600;font-size:14px}
+.res .resact button:disabled{opacity:.7}
 </style>
 </head>
 <body data-theme="light">
@@ -1282,11 +1293,11 @@ function vShelf(){return `<div class="inner"><div class="pagehead"><div><h2>My S
 function refreshRails(){const r=$('#rails');if(r){r.innerHTML=railsHTML();lazy(r)}}
 const qcache=new Map();let sAbort,sTimer,lastRes=[];
 async function searchBooks(q,signal){if(qcache.has(q))return qcache.get(q);let res=[];
- try{const r=await fetch('https://openlibrary.org/search.json?limit=8&fields=title,author_name,cover_i,first_publish_year,number_of_pages_median&q='+encodeURIComponent(q),{signal});const j=await r.json();
-  res=(j.docs||[]).map(d=>({t:d.title,a:(d.author_name||['Unknown author'])[0],y:d.first_publish_year,pages:d.number_of_pages_median||0,img:d.cover_i?'https://covers.openlibrary.org/b/id/'+d.cover_i+'-M.jpg':null,src:'Open Library'}))}catch(e){if(e.name==='AbortError')throw e}
+ try{const r=await fetch('https://openlibrary.org/search.json?limit=8&fields=key,title,author_name,cover_i,first_publish_year,number_of_pages_median&q='+encodeURIComponent(q),{signal});const j=await r.json();
+  res=(j.docs||[]).map(d=>({key:d.key,t:d.title,a:(d.author_name||['Unknown author'])[0],y:d.first_publish_year,pages:d.number_of_pages_median||0,img:d.cover_i?'https://covers.openlibrary.org/b/id/'+d.cover_i+'-M.jpg':null,src:'Open Library'}))}catch(e){if(e.name==='AbortError')throw e}
  if(res.length<4){try{const r=await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=8&q='+encodeURIComponent(q),{signal});const j=await r.json();
   const seen=new Set(res.map(x=>key(x.t,x.a)));
-  (j.items||[]).forEach(v=>{const i=v.volumeInfo,x={t:i.title,a:(i.authors||['Unknown author'])[0],y:(i.publishedDate||'').slice(0,4),pages:i.pageCount||0,img:i.imageLinks?(i.imageLinks.thumbnail||'').replace('http:','https:'):null,src:'Google Books'};if(!seen.has(key(x.t,x.a)))res.push(x)})}catch(e){if(e.name==='AbortError')throw e}}
+  (j.items||[]).forEach(v=>{const i=v.volumeInfo,x={t:i.title,a:(i.authors||['Unknown author'])[0],y:(i.publishedDate||'').slice(0,4),desc:(i.description||'').replace(/<[^>]*>/g,''),pages:i.pageCount||0,img:i.imageLinks?(i.imageLinks.thumbnail||'').replace('http:','https:'):null,src:'Google Books'};if(!seen.has(key(x.t,x.a)))res.push(x)})}catch(e){if(e.name==='AbortError')throw e}}
  res=res.slice(0,10);if(res.length)qcache.set(q,res);return res}
 function wireSearch(){const inp=$('#q'),box=$('#results');if(!inp)return;
  inp.oninput=()=>{clearTimeout(sTimer);const q=inp.value.trim();if(q.length<3){box.classList.remove('open');return}
@@ -1296,7 +1307,16 @@ function wireSearch(){const inp=$('#q'),box=$('#results');if(!inp)return;
    if(inp.value.trim()!==q)return;lastRes=res;
    if(!res.length){box.innerHTML='<div class="status">No books found. If this keeps happening, your browser may be blocking outside requests.</div>';return}
    const opts=Object.entries(SH).map(([k,v])=>`<option value="${k}"${k==='want'?' selected':''}>${v}</option>`).join('')+S.custom.map(n=>`<option value="c:${esc(n)}">${esc(n)}</option>`).join('');
-   box.innerHTML=res.map((r,i)=>`<div class="res"><div class="th" style="${r.img?'background-image:url('+esc(r.img)+')':''}"></div><div class="tx"><b>${esc(r.t)}</b><small>${esc(r.a)}${r.y?' · '+r.y:''} · ${r.src}</small></div><select aria-label="Shelf">${opts}</select><button data-act="sadd" data-i="${i}">Add</button></div>`).join('')},350)}}
+   box.innerHTML=res.map((r,i)=>`<div class="res"><button type="button" class="resmain" data-act="sprev" data-i="${i}" aria-label="Preview ${esc(r.t)}"><span class="th" style="${r.img?'background-image:url('+esc(r.img)+')':''}"></span><span class="tx"><b>${esc(r.t)}</b><small>${esc(r.a)}${r.y?' · '+r.y:''}${r.pages?' · '+r.pages+' pages':''}</small><small class="more">Tap for details</small></span></button><div class="resact"><select aria-label="Shelf">${opts}</select><button data-act="sadd" data-i="${i}">Add</button></div></div>`).join('')},350)}}
+
+function shelfOpts(){return Object.entries(SH).map(([k,v])=>`<option value="${k}"${k==='want'?' selected':''}>${v}</option>`).join('')+S.custom.map(n=>`<option value="c:${esc(n)}">${esc(n)}</option>`).join('')}
+function searchPreview(i){const r=lastRes[i];if(!r)return;const big=r.img?r.img.replace('-M.jpg','-L.jpg').replace('zoom=1','zoom=2'):'';
+ bd.dataset.id='';bd.innerHTML=`<div class="dq"><div class="big" style="${big?'background-image:url('+esc(big)+');':''}background-color:#7C9A5E;background-size:cover;background-position:center"></div><div><h4>${esc(r.t)}</h4><div class="sub">${esc(r.a)}</div><p class="hint" style="margin:6px 0 0">${[r.y,r.pages?r.pages+' pages':'',r.src].filter(Boolean).join(' · ')}</p><p class="pvdesc hint" id="pvdesc" style="margin:12px 0;line-height:1.5">${r.desc?esc(r.desc.slice(0,600)):(r.key?'Loading description…':'No description available.')}</p><div class="fld"><label>Add to<select id="pvshelf">${shelfOpts()}</select></label></div><div class="acts"><button class="btn pri" data-act="sadd2" data-i="${i}">Add to shelf</button><button class="btn" data-act="close-dlg">Back</button></div></div></div>`;
+ if(!bd.open)bd.showModal();
+ if(!r.desc&&r.key&&!r.dtried){r.dtried=1;fetch('https://openlibrary.org'+r.key+'.json').then(x=>x.json()).then(j=>{const d=typeof j.description==='string'?j.description:(j.description&&j.description.value)||'';r.desc=d.replace(/\[[^\]]*\]\([^)]*\)/g,'').split('\n')[0].slice(0,600);const el=$('#pvdesc');if(el&&bd.open)el.textContent=r.desc||'No description available.'}).catch(()=>{const el=$('#pvdesc');if(el)el.textContent='No description available.'})}
+ else if(!r.desc&&!r.key){}
+}
+function searchAdd2(btn){const r=lastRes[+btn.dataset.i],val=$('#pvshelf').value;const b=addBook(r,val.startsWith('c:')?'want':val);if(val.startsWith('c:'))place(b,val);else if(b.shelf!==val)setShelf(b,val);bd.close();const rb=document.querySelector('.res [data-act=sadd][data-i="'+btn.dataset.i+'"]');if(rb){rb.textContent='Added';rb.disabled=true}toast('Added '+r.t);refreshRails()}
 function searchAdd(btn){const r=lastRes[+btn.dataset.i],val=btn.previousElementSibling.value;
  const b=addBook(r,val.startsWith('c:')?'want':val);if(val.startsWith('c:'))place(b,val);else if(b.shelf!==val)setShelf(b,val);
  btn.textContent='Added';btn.disabled=true;toast('Added '+r.t);refreshRails()}
@@ -1466,6 +1486,8 @@ document.addEventListener('click',e=>{
  else if(a==='remove'){const ob=bk(id),oi=S.books.indexOf(ob);S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed '+(ob?ob.t:'book'),()=>{if(ob&&!bk(id)){S.books.splice(Math.min(oi,S.books.length),0,ob);save();render()}});render()}
  else if(a==='newshelf')openForm('New shelf','<div class="fld"><label>Shelf name<input name="name" required maxlength="30" placeholder="Beach reads"></label></div>',fd=>{const n=fd.get('name').trim();if(n&&!S.custom.includes(n)&&!Object.values(SH).includes(n)){S.custom.push(n);save();refreshRails();toast('Created '+n)}},'Create shelf');
  else if(a==='sadd')searchAdd(el);
+ else if(a==='sprev')searchPreview(+el.dataset.i);
+ else if(a==='sadd2')searchAdd2(el);
  else if(a==='mood'){dm=el.dataset.m;render()}
  else if(a==='rec-want'){const c=CATID[id];addBook(c,'want');(c.tags||[]).forEach(t=>S.liked[t]=(S.liked[t]||0)+1);save();toast('Added '+c.t+' to Want to Read');render()}
  else if(a==='rec-no'){const c=CATID[id];S.dismissed.push(id);if(c)c.tags.forEach(t=>S.nope[t]=(S.nope[t]||0)+1);save();toast('Got it. You will see fewer picks like that.',()=>{S.dismissed=S.dismissed.filter(x=>x!==id);if(c)c.tags.forEach(t=>{S.nope[t]=Math.max(0,(S.nope[t]||0)-1)});save();render()});render()}
@@ -1669,6 +1691,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
   ['New','On computers, navigation is now a clean sidebar that matches the phone tab bar. The bookshelf is retired.'],
   ['New','Share a club invite straight to your friends. Pick everyone or just the ones you choose, and they can join from Home or Clubs in one tap.'],
   ['New','A notification bell shows friend requests, club invites, book recommendations and club activity in one place. Choose what you want to see in Profile, under Notifications.'],
+  ['Improved','Book search results show the full title and author, and tapping a result opens a preview with a bigger cover and a description so you can be sure it is the right book.'],
   ['Improved','Softer cards, clearer buttons and easier to read text throughout.'],
   ['Improved','Home puts your current book first, with your checklist and friend activity beside it.']]},
  {id:'2026-11-26b',date:'November 26, 2026',title:'Easier friends and everyday polish',items:[
