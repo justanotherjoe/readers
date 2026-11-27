@@ -867,6 +867,20 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .now .lbl,.rnew,.rel .tag,#acctmenu .am-lbl{font-family:'Space Grotesk',sans-serif;letter-spacing:.1em}
 .pick{display:flex;align-items:center;gap:14px;padding:12px 2px;border-top:1px solid var(--line);cursor:pointer;font-weight:600}.pick input{width:22px;height:22px;margin:0;flex:none;accent-color:var(--page-green)}
 .fld label.pick,label.pick{display:flex!important;flex-direction:row;align-items:center;gap:14px}.fld label.pick span{display:inline;margin:0}
+#bell{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surf);color:inherit;display:grid;place-items:center;cursor:pointer;padding:0}
+#bell[hidden]{display:none}
+#bell .bn{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--page-orange);color:#fff;font:700 11px/18px 'DM Sans',sans-serif;text-align:center;font-style:normal;box-sizing:border-box}
+#bell .bn[hidden]{display:none}
+#notifmenu{position:absolute;top:64px;right:24px;z-index:40;width:min(380px,calc(100vw - 20px));max-height:calc(100dvh - 90px);overflow-y:auto;background:var(--page-bg);color:var(--page-text);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.25);padding:8px}
+#notifmenu .am-lbl{font:700 12px 'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--page-sub);padding:8px 10px 4px}
+#notifmenu .am-sep{height:1px;background:var(--line);margin:6px 4px}
+#notifmenu .am-i{display:block;width:100%;text-align:left;font:inherit;font-size:15px;padding:10px;border:0;background:transparent;color:inherit;border-radius:8px;cursor:pointer}
+#notifmenu .am-i:hover{background:rgba(127,127,127,.15)}
+.nrow{padding:10px;border-radius:12px;display:flex;flex-direction:column;gap:8px}.nrow.un{background:color-mix(in srgb,var(--page-green) 9%,transparent)}
+.nrow .na{display:flex;gap:8px;flex-wrap:wrap}.nrow .btn{padding:7px 14px;font-size:14px;min-height:0}
+@media (max-width:700px),(hover:none) and (max-width:900px){#notifmenu{top:52px;right:10px;position:fixed}#bell{width:34px;height:34px}}
+@media (min-width:901px) and (hover:hover),(min-width:1101px){#notifmenu{position:fixed;top:64px;right:28px}}
+#acctmenu .am-th .chv{flex:none;color:var(--page-sub);transition:transform .15s}#acctmenu .am-th[aria-expanded=true] .chv{transform:rotate(180deg)}#acctmenu .am-th[aria-expanded=true]~.am-t{padding-left:22px}
 </style>
 </head>
 <body data-theme="light">
@@ -1098,7 +1112,7 @@ function seed(){
 }
 let S=store.get('readers.v1',null);
 if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
-function normalize(){S.onbHide=!!S.onbHide;S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
+function normalize(){S.onbHide=!!S.onbHide;S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
 let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>store.set('readers.v1',S),150);cloudSoon()};
@@ -1204,7 +1218,7 @@ const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('
 let page='home';
 const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile(),notes:()=>vNotes(),friends:()=>vFriends()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
-function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';main.innerHTML='<div class="page">'+(g||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
+function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=S.notif.friends&&(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';refreshNotif();document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';main.innerHTML='<div class="page">'+(g||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf')wireSearch()}
 const phone=()=>matchMedia('(max-width:700px)').matches;
 function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&(p==='stats'||p==='notes'||p==='friends')&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
 $$('.book').forEach(b=>b.onclick=()=>{
@@ -1403,7 +1417,7 @@ function friendsCard(){if(!cloud.user)return '';const fr=cloud.friends||[],ok=fr
 function vProfile(){const p=S.profile,sh=[...Object.keys(SH),...S.custom.map(c=>'c:'+c)],nm=k=>k.startsWith('c:')?k.slice(2):SH[k];
  const vis=(v,f)=>['public','friends','private'].map(o=>`<option value="${o}"${v===o?' selected':''}>${o[0].toUpperCase()+o.slice(1)}</option>`).join('');
  return `<div class="mobonly" style="margin:0 0 14px"><button class="btn" data-go="stats" style="width:100%">See your reading stats</button></div><div class="profhead"><span class="av big">${esc(initials(p.name||'R'))}</span><div><h2 style="text-align:left;margin:0">${esc(p.name)}</h2><p style="margin:2px 0 0;text-align:left">Reading since ${p.since}. ${S.books.length} books in your library${p.imported?`, ${p.imported} imported from Goodreads`:''}.</p></div></div>
- ${accountCard()}${friendsCard()}<section class="card sec"><h3 class="ct">Profile</h3><div class="fld"><label>Display name<input data-p="name" value="${esc(p.name)}" maxlength="40"></label></div><div class="fld"><label>Profile visibility<select data-p="vis">${vis(p.vis)}</select></label></div></section>
+ ${accountCard()}${friendsCard()}${notifCard()}<section class="card sec"><h3 class="ct">Profile</h3><div class="fld"><label>Display name<input data-p="name" value="${esc(p.name)}" maxlength="40"></label></div><div class="fld"><label>Profile visibility<select data-p="vis">${vis(p.vis)}</select></label></div></section>
  <section class="card sec"><h3 class="ct">Shelf privacy</h3>${sh.map(k=>`<div class="prow"><span>${esc(nm(k))}</span><select data-p="priv" data-k="${esc(k)}" aria-label="${esc(nm(k))} visibility">${vis(p.priv[k]||p.vis)}</select></div>`).join('')}</section>
  <section class="card sec"><h3 class="ct">Bring your books</h3><p class="hint" style="margin:0 0 10px">In Goodreads, open My Books, choose Import and export, then Export Library. Drop the CSV here. Books already in your library are skipped.</p><div class="btnrow" style="margin:0"><label class="btn pri filebtn">Import Goodreads CSV<input type="file" accept=".csv,text/csv" data-import="csv" hidden></label></div></section>
  <section class="card sec"><h3 class="ct">Your data</h3><p class="hint" style="margin:0 0 10px">${cloud.on?'Your library is saved to your account. You can also export a backup any time.':'Everything is stored on this device. Export a backup any time.'}</p><div class="btnrow" style="margin:0"><button class="btn" data-act="export">Export backup</button><label class="btn filebtn">Restore backup<input type="file" accept=".json,application/json" data-import="json" hidden></label><button class="btn" data-act="clearcovers">Refresh covers</button>${cloud.on?'<button class="btn" data-act="sample">Add sample books</button>':'<button class="btn danger" data-act="reset">Reset demo data</button>'}</div></section>`}
@@ -1468,7 +1482,7 @@ document.addEventListener('click',e=>{
  else if(a==='recto')recommendDialog(null,fid)
  else if(a==='recfriend'){bd.close();recommendDialog(id)}
  else if(a==='hidecheck'){S.onbHide=true;save();render()}
- else if(a==='gocl'){cid=id;cch=null;go('clubs')}
+ else if(a==='gocl'){closeNotif();cid=id;cch=null;go('clubs')}
  else if(a==='installapp')installApp()
  else if(a==='forgot')forgotPw()
  else if(a==='saveun'){const v=($('#unin').value||'').trim().replace(/^@/,'');if(v&&!/^[A-Za-z0-9_]{3,20}$/.test(v))return toast('Use 3 to 20 letters, numbers or underscores');
@@ -1483,8 +1497,12 @@ document.addEventListener('click',e=>{
  else if(a==='shareinv-other')shareInvite({code:el.dataset.code,name:el.dataset.name,book:el.dataset.book});
  else if(a==='joininv')joinInvite(el.dataset.id,el.dataset.code);
  else if(a==='dropinv')dropInv(el.dataset.id);
- else if(a==='acct'){e.stopPropagation();acctMenu()}
- else if(a==='theme'){theme(el.dataset.k);refreshMenu()}
+ else if(a==='acct'){e.stopPropagation();closeNotif();acctMenu()}
+ else if(a==='bell'){e.stopPropagation();bellMenu()}
+ else if(a==='nview'){closeNotif();go('discover')}
+ else if(a==='nset'){closeNotif();go('profile');setTimeout(()=>{const n=$('#notifset');if(n)n.scrollIntoView({block:'center'})},50)}
+ else if(a==='theme'){theme(el.dataset.k);themeOpen=false;refreshMenu()}
+ else if(a==='themeopen'){themeOpen=!themeOpen;refreshMenu()}
  else if(a==='gopro'){closeMenu();go('profile')}
  else if(a==='gonotes'){closeMenu();go('notes')}
  else if(a==='signin'||a==='signup'){e.preventDefault();closeMenu();openAuth(a==='signup'?'up':'in')}
@@ -1496,6 +1514,7 @@ document.addEventListener('click',e=>{
  else if(a==='sample'){const add=seed().books.filter(x=>!bk(x.id));S.books.push(...add);normalize();save();toast(add.length?'Added '+add.length+' sample books':'Sample books are already in your library');render()}
  else if(a==='reset'){if(resetArm){S=seed();normalize();save();resetArm=0;toast('Demo data restored');render()}else{resetArm=1;el.textContent='Click again to confirm';setTimeout(()=>{resetArm=0;if(el.isConnected)el.textContent='Reset demo data'},3000)}}});
 document.addEventListener('change',e=>{const t=e.target;
+ if(t.dataset.p2==='notif'){S.notif[t.dataset.k]=t.checked;save();render();return}
  if(t.dataset.p2==='disc'){S.profile.discoverable=t.checked;save();toast(t.checked?'Others can now find you by name':'Name search is off');return}
  if(t.id==='sortby'){S.sort=t.value;save();refreshRails();return}
  if(t.dataset.act==='chsel'){cch=+t.value;render();return}
@@ -1622,7 +1641,7 @@ function actCard(){if(!cloud.user)return '';const have=new Set(S.books.map(b=>b.
  accepted().forEach(f=>(f.shared||[]).forEach(x=>{if(!x.f)return;const d=new Date(x.f+'T12:00:00');if(isNaN(d)||Date.now()-d>30*864e5)return;items.push({f,x,d})}));
  items.sort((a,b)=>b.d-a.d);const top=items.slice(0,4);if(!top.length)return '';
  return `<section class="card sec act"><h3 class="ct">Friend activity</h3>${top.map(({f,x,d})=>{const id=key(x.t,x.a);regCat(id,x);const days=Math.round((Date.now()-d)/864e5);return `<div class="frow"><span class="fn"><span><b>${esc(f.name)}</b> finished <i>${esc(x.t)}</i> and rated it ${x.r} of 5</span><small class="fs">${days<=0?'today':days===1?'yesterday':days+' days ago'}</small></span>${have.has(id)?'':`<span class="fbt"><button class="btn" data-act="rec-want" data-id="${esc(id)}">Want to Read</button></span>`}</div>`}).join('')}</section>`}
-function nudgeCard(){if(!cloud.user)return '';let worst=null;
+function nudgeCard(){if(!cloud.user||!S.notif.club)return '';let worst=null;
  cloud.clubs.forEach(c=>{const b=bk(c.bookId),me=b?b.cur:c.myCh;c.members.forEach(m=>{const gap=m.ch-me;if(gap>0&&(!worst||gap>worst.gap))worst={gap,c,n:m.n}})});
  if(!worst)return '';
  return `<section class="card sec nudge"><div><b>${esc(worst.n)} is ${worst.gap} chapter${worst.gap===1?'':'s'} ahead of you</b><p class="hint" style="margin:2px 0 0;text-align:left">in ${esc(worst.c.name)}. Catch up to join the chapter discussions.</p></div><button class="btn pri" data-act="gocl" data-id="${esc(worst.c.id)}">Open club</button></section>`}
@@ -1649,6 +1668,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
   ['New','A new welcome page that explains what Readers is for: tracking your reading and starting book clubs without spoilers.'],
   ['New','On computers, navigation is now a clean sidebar that matches the phone tab bar. The bookshelf is retired.'],
   ['New','Share a club invite straight to your friends. Pick everyone or just the ones you choose, and they can join from Home or Clubs in one tap.'],
+  ['New','A notification bell shows friend requests, club invites, book recommendations and club activity in one place. Choose what you want to see in Profile, under Notifications.'],
   ['Improved','Softer cards, clearer buttons and easier to read text throughout.'],
   ['Improved','Home puts your current book first, with your checklist and friend activity beside it.']]},
  {id:'2026-11-26b',date:'November 26, 2026',title:'Easier friends and everyday polish',items:[
@@ -1698,7 +1718,7 @@ function inviteDialog(d){const fr=accepted();if(!fr.length)return shareInvite(d)
    db.sendInvites(pick.map(f=>({from_user:cloud.user.id,to_user:f.other,from_name:S.profile.name||'A friend',club_name:d.name,book_title:d.book||'',code:d.code}))).then(()=>toast(pick.length===1?'Invite sent to '+pick[0].name:'Invite sent to '+pick.length+' friends')).catch(fail)},'Send invite')}
 async function joinInvite(id,code){try{const r=await db.join(code,S.profile.name);await db.dropInvite(id).catch(()=>{});cloud.invs=cloud.invs.filter(i=>i.id!==id);await loadClubs();cid=r.id;cch=null;page='clubs';$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p==='clubs'));render();toast('You joined '+r.name)}catch(e){fail(e)}}
 async function dropInv(id){try{await db.dropInvite(id);cloud.invs=cloud.invs.filter(i=>i.id!==id);render()}catch(e){fail(e)}}
-function invitesCard(){if(!cloud.user)return '';const mine=new Set(cloud.clubs.map(c=>c.code)),list=(cloud.invs||[]).filter(i=>!mine.has(i.code));if(!list.length)return '';
+function invitesCard(){if(!cloud.user||!S.notif.invites)return '';const mine=new Set(cloud.clubs.map(c=>c.code)),list=(cloud.invs||[]).filter(i=>!mine.has(i.code));if(!list.length)return '';
  return `<section class="card sec"><h3 class="ct">Club invites</h3>${list.map(i=>`<div class="frow"><span class="fn"><span><b>${esc(i.from_name)}</b> invited you to <b>${esc(i.club_name)}</b>${i.book_title?` to read <i>${esc(i.book_title)}</i>`:''}</span></span><span class="fbt"><button class="btn pri" data-act="joininv" data-id="${esc(i.id)}" data-code="${esc(i.code)}">Join</button><button class="btn" data-act="dropinv" data-id="${esc(i.id)}">Dismiss</button></span></div>`).join('')}</section>`}
 async function shareInvite(d){const url=inviteURL(d.code),text='Join my book club "'+d.name+'" for '+d.book+' on Readers. Tap the link to join (code '+d.code+'):';
  try{if(navigator.share){await navigator.share({title:'Join my book club on Readers',text,url});return}}catch(x){if(x&&x.name==='AbortError')return}
@@ -1707,7 +1727,8 @@ async function shareInvite(d){const url=inviteURL(d.code),text='Join my book clu
 async function runPendingJoin(){const code=store.get('readers.join','');if(!code||!cloud.user||!cloud.synced)return;
  try{localStorage.removeItem('readers.join')}catch(e){}
  try{const r=await db.join(code,S.profile.name);await loadClubs();cid=r.id;cch=null;page='clubs';$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p==='clubs'));render();toast('You joined '+r.name)}catch(e){fail(e)}}
-function closeMenu(){const m=$('#acctmenu');if(m)m.remove()}
+let themeOpen=false;
+function closeMenu(){themeOpen=false;const m=$('#acctmenu');if(m)m.remove()}
 const THEMES=[
  {k:'light',n:'Light',d:'Warm paper and green',t:'light',s:'',sw:['#F4EEDD','#0F6E56']},
  {k:'dark',n:'Dark',d:'Deep green, high contrast',t:'dark',s:'',sw:['#10201B','#A6E3CF']},
@@ -1718,23 +1739,44 @@ const curTheme=()=>document.body.dataset.tk||'light';
 function menuHTML(){const cur=curTheme(),u=cloud.user;
  const top=u?`<div class="am-who"><b>${esc(S.profile.name||'Reader')}</b><small>${esc(u.email||'')}</small></div><button class="am-i" role="menuitem" data-act="gopro">Profile and settings</button><button class="am-i am-r" role="menuitem" data-act="gofriends">Friends${friendBadge()?'<span class="rnew">'+friendBadge()+'</span>':''}</button>`
   :cloud.on?`<button class="am-i am-b" role="menuitem" data-act="signin">Sign in</button><button class="am-i" role="menuitem" data-act="signup">Create account</button>`:'';
- const th=`<div class="am-lbl">Theme</div>`+THEMES.map(x=>`<button class="am-i am-t" role="menuitemradio" aria-checked="${x.k===cur}" data-act="theme" data-k="${x.k}"><span class="sw" style="background:linear-gradient(135deg,${x.sw[0]} 50%,${x.sw[1]} 50%)"></span><span class="tn"><b>${x.n}</b><small>${x.d}</small></span>${x.k===cur?'<svg class="ck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>':''}</button>`).join('');
+ const ct=THEMES.find(x=>x.k===cur)||THEMES[0],CHV=`<svg class="chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
+ const th=`<button class="am-i am-t am-th" role="menuitem" aria-expanded="${themeOpen}" data-act="themeopen"><span class="sw" style="background:linear-gradient(135deg,${ct.sw[0]} 50%,${ct.sw[1]} 50%)"></span><span class="tn"><b>Theme</b><small>${ct.n}</small></span>${CHV}</button>`+(!themeOpen?'':THEMES.map(x=>`<button class="am-i am-t" role="menuitemradio" aria-checked="${x.k===cur}" data-act="theme" data-k="${x.k}"><span class="sw" style="background:linear-gradient(135deg,${x.sw[0]} 50%,${x.sw[1]} 50%)"></span><span class="tn"><b>${x.n}</b><small>${x.d}</small></span>${x.k===cur?'<svg class="ck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>':''}</button>`).join('')+'');
  const rel=`<button class="am-i am-r" role="menuitem" data-act="gonotes">Release notes${hasNew()?'<span class="rnew">New</span>':''}</button>`;
  const inst=standalone()?'':'<button class="am-i" role="menuitem" data-act="installapp">Install app</button>';
  return top+rel+inst+'<div class="am-sep"></div>'+th+(u?'<div class="am-sep"></div><button class="am-i" role="menuitem" data-act="signout">Sign out</button>':'')}
 function acctMenu(){if($('#acctmenu'))return closeMenu();
  const m=document.createElement('div');m.id='acctmenu';m.setAttribute('role','menu');m.innerHTML=menuHTML();$('header').appendChild(m)}
 function refreshMenu(){const m=$('#acctmenu');if(m)m.innerHTML=menuHTML()}
-document.addEventListener('click',e=>{if(!e.target.closest('#acctmenu,#acct'))closeMenu()});
+document.addEventListener('click',e=>{const ids=e.composedPath().map(n=>n.id);if(!ids.includes('acctmenu')&&!ids.includes('acct'))closeMenu();if(!ids.includes('notifmenu')&&!ids.includes('bell'))closeNotif()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 function renderAcct(){let tools=$('#tools');
  if(!tools){tools=document.createElement('div');tools.id='tools';tg.parentNode.insertBefore(tools,tg);tg.remove()}
  let b=$('#acct');if(!b){b=document.createElement('button');b.id='acct';b.dataset.act='acct';tools.appendChild(b)}
+ let bl=$('#bell');if(!bl){bl=document.createElement('button');bl.id='bell';bl.dataset.act='bell';bl.setAttribute('aria-label','Notifications');bl.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><i class="bn"></i>';tools.insertBefore(bl,b)}
+ bl.hidden=!(cloud.user&&cloud.ready);{const n=notifCount();const bi=bl.querySelector('.bn');bi.textContent=n>9?'9+':n;bi.hidden=!n}
  if(cloud.on&&!cloud.ready){b.hidden=true;return}b.hidden=false;
  const CH='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
  if(cloud.user){b.className='acct in';b.innerHTML='<span>'+esc(initials(S.profile.name||cloud.user.email||'R'))+'</span>';b.setAttribute('aria-label','Account and theme menu')}
  else if(cloud.on){b.className='acct out';b.innerHTML='Sign in '+CH;b.setAttribute('aria-label','Sign in and theme menu')}
  else{b.className='acct in anon';b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>';b.setAttribute('aria-label','Theme menu')}}
+
+
+/* ---------- notifications ---------- */
+function notifItems(){const n=S.notif,out=[];if(!cloud.user)return out;
+ if(n.friends)(cloud.friends||[]).filter(f=>f.status==='pending'&&f.incoming).forEach(f=>out.push({k:'f'+f.id,t:'friend',unseen:1,html:`<b>${esc(f.name)}</b> wants to connect`,acts:`<button class="btn pri" data-act="facc" data-id="${esc(f.id)}">Accept</button><button class="btn" data-act="fdec" data-id="${esc(f.id)}">Decline</button>`}));
+ if(n.invites){const mine=new Set((cloud.clubs||[]).map(c=>c.code));(cloud.invs||[]).filter(i=>!mine.has(i.code)).forEach(i=>out.push({k:'i'+i.id,t:'invite',unseen:1,html:`<b>${esc(i.from_name)}</b> invited you to <b>${esc(i.club_name)}</b>`,acts:`<button class="btn pri" data-act="joininv" data-id="${esc(i.id)}" data-code="${esc(i.code)}">Join</button><button class="btn" data-act="dropinv" data-id="${esc(i.id)}">Dismiss</button>`}))}
+ if(n.recs)(cloud.recs||[]).slice(0,5).forEach(r=>out.push({k:'r'+r.id,t:'rec',unseen:!S.nseen.includes(r.id),html:`<b>${esc(r.from_name)}</b> recommended <i>${esc(r.title)}</i>`,acts:`<button class="btn" data-act="nview">See in Discover</button>`}));
+ if(n.club){let w=null;(cloud.clubs||[]).forEach(c=>{const b=bk(c.bookId),me=b?b.cur:c.myCh;c.members.forEach(m=>{const g=m.ch-me;if(g>0&&(!w||g>w.g))w={g,c,n:m.n}})});if(w)out.push({k:'c'+w.c.id,t:'club',unseen:1,html:`<b>${esc(w.n)}</b> is ${w.g} chapter${w.g===1?'':'s'} ahead in <b>${esc(w.c.name)}</b>`,acts:`<button class="btn" data-act="gocl" data-id="${esc(w.c.id)}">Open club</button>`})}
+ return out}
+const notifCount=()=>notifItems().filter(i=>i.unseen).length;
+function notifHTML(){const it=notifItems();return `<div class="am-lbl">Notifications</div>`+(it.length?it.map(i=>`<div class="nrow${i.unseen?' un':''}"><div class="nt">${i.html}</div><div class="na">${i.acts}</div></div>`).join(''):'<p class="hint" style="padding:6px 10px 12px">You are all caught up.</p>')+`<div class="am-sep"></div><button class="am-i" data-act="nset">Notification settings</button>`}
+function closeNotif(){const m=$('#notifmenu');if(m)m.remove()}
+function bellMenu(){if($('#notifmenu'))return closeNotif();closeMenu();
+ const m=document.createElement('div');m.id='notifmenu';m.setAttribute('role','dialog');m.setAttribute('aria-label','Notifications');m.innerHTML=notifHTML();$('header').appendChild(m);
+ const ids=(cloud.recs||[]).map(r=>r.id).filter(x=>!S.nseen.includes(x));if(ids.length){S.nseen=S.nseen.concat(ids).slice(-200);save()}}
+function refreshNotif(){const m=$('#notifmenu');if(m)m.innerHTML=notifHTML()}
+function notifCard(){if(!cloud.user)return '';const N=S.notif,row=(k,l,d)=>`<label class="pick"><input type="checkbox" data-p2="notif" data-k="${k}"${N[k]?' checked':''}><span>${l}<small class="hint" style="display:block;font-weight:400">${d}</small></span></label>`;
+ return `<section class="card sec" id="notifset"><h3 class="ct">Notifications</h3><p class="hint" style="margin:0 0 6px">Choose what shows in the bell and on your Home page. Turning one off only hides it.</p>${row('friends','Friend requests','When someone wants to connect.')}${row('invites','Club invites','When a friend invites you to a club.')}${row('recs','Book recommendations','When a friend sends you a book.')}${row('club','Club activity','When friends are ahead of you in a club.')}</section>`}
 
 /* ---------- theme ---------- */
 function theme(k){const T=THEMES.find(x=>x.k===k)||THEMES[0];document.body.dataset.theme=T.t;document.body.dataset.skin=T.s;document.body.dataset.tk=T.k;logo.src=T.t==='dark'?D:L;store.set('readers.theme',T.k)}
