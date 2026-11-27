@@ -903,6 +903,8 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .ord .grip{color:var(--page-sub);display:grid;place-items:center;flex:none}
 .ord .on{flex:1;min-width:0;display:flex;flex-direction:column}.ord .on b{font:700 16px 'Space Grotesk',system-ui,sans-serif}.ord .on small{color:var(--page-sub);font-size:13px}
 .ord .mv{min-width:44px;min-height:44px;padding:0;font-size:20px;line-height:1}
+.search.flat{padding:0;margin:0 0 22px;max-width:680px}.search.flat .results{left:0;right:0}
+.page>.search:first-child{margin-top:0}
 </style>
 </head>
 <body data-theme="light">
@@ -1240,7 +1242,7 @@ const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('
 let page='home';
 const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile(),notes:()=>vNotes(),friends:()=>vFriends()};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
-function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=S.notif.friends&&(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';refreshNotif();document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';main.innerHTML='<div class="page">'+(g||VIEWS[page]())+'</div>';lazy(main);if(page==='shelf'){shelfEdit=false;wireSearch();syncFoldAll()}}
+function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=S.notif.friends&&(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';refreshNotif();document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';const gs=(!g&&page!=='shelf'&&page!=='profile')?`<div class="search${WIDE[page]?'':' flat'}"><input id="q" type="search" placeholder="Search any book or author" autocomplete="off" aria-label="Search books"><div class="results" id="results"></div></div>`:'';main.innerHTML='<div class="page">'+gs+(g||VIEWS[page]())+'</div>';lazy(main);if(!g&&page!=='profile')wireSearch();if(page==='shelf'){shelfEdit=false;syncFoldAll()}}
 const phone=()=>matchMedia('(max-width:700px),(hover:none) and (max-width:900px)').matches;
 function go(p){page=p;$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p===p||(phone()&&(p==='stats'||p==='notes'||p==='friends')&&x.dataset.p==='profile')));render();if(document.scrollingElement)document.scrollingElement.scrollTop=0}
 $$('.book').forEach(b=>b.onclick=()=>{
@@ -1725,6 +1727,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
   ['New','A notification bell shows friend requests, club invites, book recommendations and club activity in one place. Choose what you want to see in Profile, under Notifications.'],
   ['Improved','Book search results show the full title and author, and tapping a result opens a preview with a bigger cover and a description so you can be sure it is the right book.'],
   ['New','Shelves on My Shelf can be collapsed and expanded, and Readers remembers how you left them, even on your other devices. Use Collapse all to keep just the shelf you care about open. Tap Reorder to move shelves up or down, or drag them on a computer, and Readers remembers your order.'],
+  ['New','Search for any book from any page, not just My Shelf. Results show up right where you are, and you can add a book without leaving the page.'],
   ['Improved','Softer cards, clearer buttons and easier to read text throughout.'],
   ['Improved','Home puts your current book first, with your checklist and friend activity beside it.']]},
  {id:'2026-11-26b',date:'November 26, 2026',title:'Easier friends and everyday polish',items:[
