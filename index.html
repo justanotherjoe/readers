@@ -865,6 +865,8 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .now .chap small{font-family:Newsreader,Georgia,serif;font-style:italic;font-size:15px}
 .kpi b,.match b,.goalbar b{font-family:'Space Grotesk',sans-serif;letter-spacing:-.02em}
 .now .lbl,.rnew,.rel .tag,#acctmenu .am-lbl{font-family:'Space Grotesk',sans-serif;letter-spacing:.1em}
+.pick{display:flex;align-items:center;gap:14px;padding:12px 2px;border-top:1px solid var(--line);cursor:pointer;font-weight:600}.pick input{width:22px;height:22px;margin:0;flex:none;accent-color:var(--page-green)}
+.fld label.pick,label.pick{display:flex!important;flex-direction:row;align-items:center;gap:14px}.fld label.pick span{display:inline;margin:0}
 </style>
 </head>
 <body data-theme="light">
@@ -891,7 +893,7 @@ const key=(t,a)=>(t+'|'+a).toLowerCase().replace(/\s+/g,' ').trim();
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* ---------- cloud (Supabase). Leave both blank to run in local demo mode ---------- */
 const SB_URL='https://mltikckphcxkbtgmgjvw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdGlrY2twaGN4a2J0Z21nanZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2NTY1NzEsImV4cCI6MjExMTIzMjU3MX0.8nwf4Bf881Wv-JTX2--PTR1iqJdt2C7NQEKhdCBNp1M';
-const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],friends:[],recs:[],fcode:'',synced:false,ready:false,err:''};
+const cloud={on:!!(SB_URL&&SB_KEY&&window.supabase),sb:null,user:null,clubs:[],friends:[],recs:[],invs:[],fcode:'',synced:false,ready:false,err:''};
 if(cloud.on)cloud.sb=window.supabase.createClient(SB_URL,SB_KEY);
 let pushT;
 const blank=()=>({v:1,goal:24,custom:[],dismissed:[],books:[],clubs:[],sort:'recent',profile:{name:'Reader',since:new Date().getFullYear(),vis:'friends',priv:{},imported:0}});
@@ -914,6 +916,9 @@ const db={
  async putProfile(name,shared,disc,un){const{error}=await cloud.sb.from('profiles').upsert({user_id:cloud.user.id,name,shared,discoverable:!!disc,username:un||null,updated_at:new Date().toISOString()});if(error)throw error},
  async find(q){const{data,error}=await cloud.sb.rpc('find_readers',{p_q:q});if(error)throw error;return data||[]},
  async reqUser(uid){const{data,error}=await cloud.sb.rpc('request_friend_user',{p_user:uid});if(error)throw error;return data},
+ async sendInvites(rows){const{error}=await cloud.sb.from('club_invites').upsert(rows,{onConflict:'from_user,to_user,code',ignoreDuplicates:true});if(error)throw error},
+ async invites(){const{data,error}=await cloud.sb.from('club_invites').select('*').eq('to_user',cloud.user.id).order('created_at',{ascending:false});if(error)throw error;return data||[]},
+ async dropInvite(id){const{error}=await cloud.sb.from('club_invites').delete().eq('id',id);if(error)throw error},
  async sendRec(row){const{error}=await cloud.sb.from('recommendations').insert({...row,from_user:cloud.user.id});if(error)throw error},
  async recs(){const{data,error}=await cloud.sb.from('recommendations').select('*').eq('to_user',cloud.user.id).order('created_at',{ascending:false}).limit(50);if(error)throw error;return data||[]},
  async myCode(){const{data,error}=await cloud.sb.from('profiles').select('code').eq('user_id',cloud.user.id).maybeSingle();if(error)throw error;return data&&data.code},
@@ -1234,7 +1239,7 @@ function vHome(){
  const LOCK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
  const rc=done<GOAL_UNLOCK?`<section class="recs locked"><div class="rl"><h3><span class="lk">${LOCK}</span>Recommendations unlock at ${GOAL_UNLOCK} books</h3><p>Readers learns your taste from the books you finish and rate. ${GOAL_UNLOCK-done===1?'Just 1 more to go.':(GOAL_UNLOCK-done)+' more to go.'} Nothing here is sponsored.</p>${meter(done,GOAL_UNLOCK).replace('books logged','finished books')}</div><div class="btnrow" style="margin:0"><button class="btn pri" data-go="shelf">Add books</button><button class="btn" data-go="profile">Import from Goodreads</button></div></section>`
  :`<section class="recs"><div><h3>Your recommendations are ready</h3><p>${Math.min(6,recs.length)} books picked from the ${done} you have finished. Go through them one at a time.</p></div><div style="display:flex;align-items:center;gap:18px"><div class="stack">${recs.slice(0,4).map(x=>`<div ${cvAttrs(x.c)}></div>`).join('')}</div><button class="btn pri" data-act="openq">See recommendations</button></div></section>`;
- return `<div class="hgrid"><div class="hmain">${hero}${goal}${rc}</div><aside class="hside">${checklist()}${nudgeCard()}${actCard()}</aside></div>`}
+ return `<div class="hgrid"><div class="hmain">${hero}${goal}${rc}</div><aside class="hside">${invitesCard()}${checklist()}${nudgeCard()}${actCard()}</aside></div>`}
 let QR=[],qi=0;
 function renderQ(){
  if(qi>=QR.length){dq.innerHTML='<div class="dqend"><h4 style="font:700 26px Space Grotesk,system-ui,sans-serif;margin:0 0 8px">That is your queue for now</h4><p style="color:var(--page-sub)">Finish another book and Readers will build a new one.</p><button class="btn pri" data-act="close-dlg">Done</button></div>';return}
@@ -1325,9 +1330,9 @@ function vDiscover(){const done=onShelf('finished').length;
 let cid=null,cch=null;
 function vClubs(){
  const head=`<div class="pagehead"><div><h2>Book clubs</h2><p>Discussion threads open as you reach each chapter, so there are no spoilers.</p></div><div class="btnrow" style="margin:0">${cloud.user?'<button class="btn" data-act="joinclub">Join with code</button>':''}<button class="btn pri" data-act="newclub">Start a club</button></div></div>${cloud.on&&!cloud.user?'<div class="card" style="margin-bottom:16px"><p style="margin:0 0 10px"><b>These are demo clubs.</b> Sign in to start real clubs and invite friends with a code.</p><button class="btn pri" data-act="signin">Sign in or sign up</button></div>':''}`;
- if(!CLS().length)return `<div class="inner">${head}<div class="card"><p style="margin:0">${cloud.user?'No clubs yet. Start one with a book you are reading or want to read, then share the invite code. Or join a friend\'s club with their code.':'No clubs yet. Start one with a book you are reading or want to read.'}</p></div></div>`;
+ if(!CLS().length)return `<div class="inner">${head}${invitesCard()}<div class="card"><p style="margin:0">${cloud.user?'No clubs yet. Start one with a book you are reading or want to read, then share the invite code. Or join a friend\'s club with their code.':'No clubs yet. Start one with a book you are reading or want to read.'}</p></div></div>`;
  const cl=CLS().find(c=>c.id===cid)||CLS()[0];if(cid!==cl.id){cid=cl.id;cch=null}
- const b=bk(cl.bookId);if(!b)return `<div class="inner">${head}<div class="card"><p>The book for this club is no longer in your library.</p><button class="btn danger" data-act="delclub" data-id="${cl.id}">Delete club</button></div></div>`;
+ const b=bk(cl.bookId);if(!b)return `<div class="inner">${head}${invitesCard()}<div class="card"><p>The book for this club is no longer in your library.</p><button class="btn danger" data-act="delclub" data-id="${cl.id}">Delete club</button></div></div>`;
  if(!b.chapters){b.chapters=genCh(12);b.cur=Math.round((b.pr||0)*12/100)}
  const n=b.chapters.length,me=b.cur;if(cch==null)cch=Math.max(1,Math.min(me||1,n));
  const nxt=cl.sched.find(s=>me<s.upto),prev=nxt?(cl.sched[cl.sched.indexOf(nxt)-1]||{upto:0}).upto:0;
@@ -1336,7 +1341,7 @@ function vClubs(){
  const sub=nxt?`${nxt.upto-me} chapter${nxt.upto-me===1?'':'s'} to go · ${days>0?days+' days left':'due now'}`:'Nice work.';
  const mem=[{n:'You',ch:me,me:1},...cl.members].sort((x,y)=>y.ch-x.ch);
  const posts=cl.posts.filter(p=>p.ch===cch).sort((x,y)=>x.ts.localeCompare(y.ts)),locked=cch>me;
- return `<div class="inner">${head}<div class="chips" role="group" aria-label="Your clubs">${CLS().map(c=>`<button class="chip" aria-pressed="${c.id===cl.id}" data-act="club" data-id="${c.id}">${esc(c.name)}</button>`).join('')}</div>
+ return `<div class="inner">${head}${invitesCard()}<div class="chips" role="group" aria-label="Your clubs">${CLS().map(c=>`<button class="chip" aria-pressed="${c.id===cl.id}" data-act="club" data-id="${c.id}">${esc(c.name)}</button>`).join('')}</div>
  <div class="grid club">
  <section class="card"><div class="lbl">Current pick</div><h3 class="ct">${esc(b.t)}</h3><p class="by" style="margin:0 0 14px">${esc(b.a)}</p>
   ${cl.code?`<p class="by" style="margin:0 0 14px">Invite code <b class="code">${esc(cl.code)}</b> <button class="btn" data-act="copycode" data-code="${esc(cl.code)}">Copy</button> <button class="btn pri" data-act="shareinv" data-code="${esc(cl.code)}" data-name="${esc(cl.name)}" data-book="${esc(b.t)}">Share invite</button></p>`:''}
@@ -1474,7 +1479,10 @@ document.addEventListener('click',e=>{
  else if(a==='delclub'){if(cloud.user){const c=cloud.clubs.find(x=>x.id===id);if(c)db.leave(c).then(()=>{cloud.clubs=cloud.clubs.filter(x=>x.id!==id);cid=null;render();toast('You left the club')}).catch(fail);return}S.clubs=S.clubs.filter(c=>c.id!==id);cid=null;save();render()}
  else if(a==='joinclub')joinClub();
  else if(a==='copycode'){try{navigator.clipboard.writeText(el.dataset.code);toast('Code copied')}catch(x){toast('Code: '+el.dataset.code)}}
- else if(a==='shareinv')shareInvite(el.dataset);
+ else if(a==='shareinv')inviteDialog(el.dataset);
+ else if(a==='shareinv-other')shareInvite({code:el.dataset.code,name:el.dataset.name,book:el.dataset.book});
+ else if(a==='joininv')joinInvite(el.dataset.id,el.dataset.code);
+ else if(a==='dropinv')dropInv(el.dataset.id);
  else if(a==='acct'){e.stopPropagation();acctMenu()}
  else if(a==='theme'){theme(el.dataset.k);refreshMenu()}
  else if(a==='gopro'){closeMenu();go('profile')}
@@ -1553,7 +1561,7 @@ function sharedList(){const p=S.profile,v=(p.priv&&p.priv.finished)||p.vis;if(v=
 let profSig='';
 async function syncProfile(){if(!cloud.user)return;const shared=sharedList(),sig=JSON.stringify([S.profile.name,shared,!!S.profile.discoverable,S.profile.username||'']);if(sig===profSig&&cloud.fcode)return;
  await db.putProfile(S.profile.name||'Reader',shared,S.profile.discoverable,S.profile.username);profSig=sig;if(!cloud.fcode)cloud.fcode=(await db.myCode())||''}
-async function loadFriends(){if(!cloud.user)return;try{cloud.friends=await db.friends()}catch(e){}try{cloud.recs=await db.recs()}catch(e){}}
+async function loadFriends(){if(!cloud.user)return;try{cloud.friends=await db.friends()}catch(e){}try{cloud.recs=await db.recs()}catch(e){}try{cloud.invs=await db.invites()}catch(e){}}
 async function sendFriend(code){try{const r=await db.reqFriend(code);fq='';fres=[];await loadFriends();render();toast(r.status==='accepted'?'You are now friends with '+r.name:r.status==='pending'?'Request sent to '+r.name:'Already connected with '+r.name)}catch(e){fail(e)}}
 async function shareFriend(){if(!cloud.fcode)return;const url=location.origin+location.pathname+'?friend='+encodeURIComponent(cloud.fcode),text='Connect with me on Readers so we can share book picks. Tap the link to add me (code '+cloud.fcode+'):';
  try{if(navigator.share){await navigator.share({title:'Add me on Readers',text,url});return}}catch(x){if(x&&x.name==='AbortError')return}
@@ -1640,6 +1648,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
  {id:'2026-11-27',date:'November 27, 2026',title:'A fresh new look',items:[
   ['New','A new welcome page that explains what Readers is for: tracking your reading and starting book clubs without spoilers.'],
   ['New','On computers, navigation is now a clean sidebar that matches the phone tab bar. The bookshelf is retired.'],
+  ['New','Share a club invite straight to your friends. Pick everyone or just the ones you choose, and they can join from Home or Clubs in one tap.'],
   ['Improved','Softer cards, clearer buttons and easier to read text throughout.'],
   ['Improved','Home puts your current book first, with your checklist and friend activity beside it.']]},
  {id:'2026-11-26b',date:'November 26, 2026',title:'Easier friends and everyday polish',items:[
@@ -1680,6 +1689,17 @@ function vNotes(){store.set('readers.seen',RELEASES[0].id);document.body.dataset
 
 /* ---------- invites, auto join and the account button ---------- */
 const inviteURL=c=>location.origin+location.pathname+'?join='+encodeURIComponent(c);
+
+function inviteDialog(d){const fr=accepted();if(!fr.length)return shareInvite(d);
+ const inClub=new Set(((cloud.clubs.find(c=>c.code===d.code)||{}).members||[]).map(m=>m.uid));
+ const list=fr.filter(f=>!inClub.has(f.other));
+ openForm('Share club invite',`<p class="hint" style="margin:0 0 10px">Invite friends to <b>${esc(d.name)}</b>. They will see it on their Home and Clubs pages.</p>`+(list.length?`<label class="chip chk" style="margin-bottom:8px"><input type="checkbox" onchange="this.form.querySelectorAll('[name=f]').forEach(c=>c.checked=this.checked)"> Select all friends</label><div class="fld">${list.map(f=>`<label class="pick"><input type="checkbox" name="f" value="${esc(f.id)}"><span>${esc(f.name)}</span></label>`).join('')}</div>`:'<p class="hint">All your friends are already in this club.</p>')+`<p style="margin:12px 0 0"><button type="button" class="lnk" data-act="shareinv-other" data-code="${esc(d.code)}" data-name="${esc(d.name)}" data-book="${esc(d.book)}">Share a link another way</button></p>`,
+  fd=>{const ids=fd.getAll('f'),pick=list.filter(f=>ids.includes(f.id));if(!pick.length){toast('Pick at least one friend');return}
+   db.sendInvites(pick.map(f=>({from_user:cloud.user.id,to_user:f.other,from_name:S.profile.name||'A friend',club_name:d.name,book_title:d.book||'',code:d.code}))).then(()=>toast(pick.length===1?'Invite sent to '+pick[0].name:'Invite sent to '+pick.length+' friends')).catch(fail)},'Send invite')}
+async function joinInvite(id,code){try{const r=await db.join(code,S.profile.name);await db.dropInvite(id).catch(()=>{});cloud.invs=cloud.invs.filter(i=>i.id!==id);await loadClubs();cid=r.id;cch=null;page='clubs';$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p==='clubs'));render();toast('You joined '+r.name)}catch(e){fail(e)}}
+async function dropInv(id){try{await db.dropInvite(id);cloud.invs=cloud.invs.filter(i=>i.id!==id);render()}catch(e){fail(e)}}
+function invitesCard(){if(!cloud.user)return '';const mine=new Set(cloud.clubs.map(c=>c.code)),list=(cloud.invs||[]).filter(i=>!mine.has(i.code));if(!list.length)return '';
+ return `<section class="card sec"><h3 class="ct">Club invites</h3>${list.map(i=>`<div class="frow"><span class="fn"><span><b>${esc(i.from_name)}</b> invited you to <b>${esc(i.club_name)}</b>${i.book_title?` to read <i>${esc(i.book_title)}</i>`:''}</span></span><span class="fbt"><button class="btn pri" data-act="joininv" data-id="${esc(i.id)}" data-code="${esc(i.code)}">Join</button><button class="btn" data-act="dropinv" data-id="${esc(i.id)}">Dismiss</button></span></div>`).join('')}</section>`}
 async function shareInvite(d){const url=inviteURL(d.code),text='Join my book club "'+d.name+'" for '+d.book+' on Readers. Tap the link to join (code '+d.code+'):';
  try{if(navigator.share){await navigator.share({title:'Join my book club on Readers',text,url});return}}catch(x){if(x&&x.name==='AbortError')return}
  try{await navigator.clipboard.writeText(text+' '+url);toast('Invite message copied. Paste it into a text or email.')}catch(x){toast('Invite link: '+url)}}
