@@ -905,6 +905,16 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .ord .mv{min-width:44px;min-height:44px;padding:0;font-size:20px;line-height:1}
 .search.flat{padding:0;margin:0 0 22px;max-width:680px}.search.flat .results{left:0;right:0}
 .page>.search:first-child{margin-top:0}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surf);gap:2px}
+.seg button{border:0;background:transparent;color:inherit;font:600 14px/1 inherit;padding:9px 16px;border-radius:999px;cursor:pointer;min-height:38px}
+.seg button.on{background:var(--tab-on,#2f5d50);color:#fff}
+.lbl2{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.pgnum{display:flex;align-items:center;gap:10px;margin-top:10px}
+.pgnum input{width:110px}
+.pgform{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.pgform label{display:flex;align-items:center;gap:8px;font-weight:600}
+.pgform input{width:100px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:inherit;font:inherit}
 </style>
 </head>
 <body data-theme="light">
@@ -1136,7 +1146,7 @@ function seed(){
 }
 let S=store.get('readers.v1',null);
 if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
-function normalize(){S.onbHide=!!S.onbHide;S.fold=S.fold||{};S.order=Array.isArray(S.order)?S.order:[];S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
+function normalize(){S.onbHide=!!S.onbHide;S.fold=S.fold||{};S.track=S.track==='pages'?'pages':'chapters';S.order=Array.isArray(S.order)?S.order:[];S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
 let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>store.set('readers.v1',S),150);cloudSoon()};
@@ -1145,7 +1155,10 @@ addEventListener('pagehide',()=>{store.set('readers.v1',S);if(cloud.user&&cloud.
 /* ---------- derived values ---------- */
 const bk=id=>S.books.find(b=>b.id===id);
 const onShelf=s=>S.books.filter(b=>b.shelf===s);
-const progress=b=>b.shelf==='finished'?100:b.chapters?Math.round(b.cur/b.chapters.length*100):(b.pr||0);
+const progress=b=>b.shelf==='finished'?100:(b.pages&&b.pg!=null)?Math.min(100,Math.round(b.pg/b.pages*100)):b.chapters?Math.round(b.cur/b.chapters.length*100):(b.pr||0);
+const setCh=(b,v)=>{const n=b.chapters.length;b.cur=Math.max(0,Math.min(n,+v||0));b.pr=Math.round(b.cur/n*100);if(b.pages)b.pg=Math.round(b.cur/n*b.pages)};
+const setPg=(b,v)=>{if(!b.pages)return;b.pg=Math.max(0,Math.min(b.pages,Math.round(+v||0)));b.pr=Math.round(b.pg/b.pages*100);if(b.chapters)b.cur=Math.min(b.chapters.length,Math.floor(b.pg/b.pages*b.chapters.length))};
+const pgMode=()=>S.track==='pages';
 const byFin=(a,b)=>(b.fin||'').localeCompare(a.fin||'');
 const finYear=()=>onShelf('finished').filter(b=>b.fin&&b.fin.startsWith(YEAR));
 const col=b=>C[(b.t.length+b.a.length)%C.length];
@@ -1269,9 +1282,9 @@ function vHome(){
  const rd=onShelf('reading'),r=rd.find(b=>b.chapters)||rd[0];let hero;
  if(r){const n=r.chapters&&r.chapters.length,c=r.cur;
   hero=`<section class="now"><div class="cv" ${cvAttrs(r)}></div><div><div class="lbl">Currently reading</div><h2>${esc(r.t)}</h2><p class="by">${esc(r.a)}</p>`+
-  (n?`<div class="chap">${c<n?'Chapter '+(c+1)+' of '+n:'All '+n+' chapters read'}<small>${c<n?esc(r.chapters[c]):'Ready to mark as finished'}</small></div><div class="ticks" aria-hidden="true">${r.chapters.map((_,i)=>`<span class="${i<c?'done':i===c?'cur':''}" title="${esc(r.chapters[i])}"></span>`).join('')}</div>`
+  (pgMode()&&r.pages?`<div class="chap">Page ${r.pg||0} of ${r.pages}<small>${progress(r)}% read${n&&c<n?' · chapter '+(c+1)+' of '+n:''}</small></div><div class="bar" style="max-width:420px;margin:12px 0"><i style="width:${progress(r)}%;background:var(--page-orange);display:block;height:100%"></i></div><div class="pgform"><label>Now on page <input type="number" inputmode="numeric" min="0" max="${r.pages}" value="${r.pg||0}" aria-label="Current page"></label><button class="btn pri" data-act="setpg" data-id="${esc(r.id)}">Update page</button></div>`:n?`<div class="chap">${c<n?'Chapter '+(c+1)+' of '+n:'All '+n+' chapters read'}<small>${c<n?esc(r.chapters[c]):'Ready to mark as finished'}</small></div><div class="ticks" aria-hidden="true">${r.chapters.map((_,i)=>`<span class="${i<c?'done':i===c?'cur':''}" title="${esc(r.chapters[i])}"></span>`).join('')}</div>`
    :`<div class="chap">${progress(r)}% read</div><div class="bar" style="max-width:420px;margin:12px 0"><i style="width:${progress(r)}%;background:var(--page-orange);display:block;height:100%"></i></div>`)+
-  `<div class="btnrow">${n&&c<n?`<button class="btn pri" data-act="nextch" data-id="${esc(r.id)}">Finished this chapter</button>`:`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`}<button class="btn" data-act="note" data-id="${esc(r.id)}">Add a note</button><button class="btn" data-act="book" data-id="${esc(r.id)}">Details</button></div>${rd.length>1?`<p class="also">Also reading: ${rd.filter(x=>x!==r).map(x=>`<button class="lnk" data-act="book" data-id="${esc(x.id)}">${esc(x.t)} (${progress(x)}%)</button>`).join(', ')}</p>`:''}</div></section>`}
+  `<div class="btnrow">${pgMode()&&r.pages?(r.pg>=r.pages?`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`:''):n&&c<n?`<button class="btn pri" data-act="nextch" data-id="${esc(r.id)}">Finished this chapter</button>`:`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`}<button class="btn" data-act="note" data-id="${esc(r.id)}">Add a note</button><button class="btn" data-act="book" data-id="${esc(r.id)}">Details</button></div>${rd.length>1?`<p class="also">Also reading: ${rd.filter(x=>x!==r).map(x=>`<button class="lnk" data-act="book" data-id="${esc(x.id)}">${esc(x.t)} (${progress(x)}%)</button>`).join(', ')}</p>`:''}</div></section>`}
  else hero=`<section class="card"><h3 style="margin:0 0 6px;font:700 22px Space Grotesk,system-ui,sans-serif">Nothing in progress</h3><p style="margin:0 0 14px">Pick something from Want to Read and start a new chapter.</p><button class="btn pri" data-go="shelf">Open My Shelf</button></section>`;
  const fy=finYear().length,done=onShelf('finished').length,recs=topPicks();
  const goal=`<section class="goalbar"><div><b>${fy} of ${S.goal}</b> books finished in ${YEAR}</div><div class="bar"><i style="width:${Math.min(100,fy/S.goal*100)}%;background:var(--page-green);display:block;height:100%"></i></div><button class="lnk" data-go="stats">See stats</button></section>`;
@@ -1358,19 +1371,21 @@ function openBook(id,focusNote){const b=bk(id);if(!b)return;const n=b.chapters&&
  <div class="fld"><label>Shelf<select data-f="shelf">${Object.entries(SH).map(([k,v])=>`<option value="${k}"${b.shelf===k?' selected':''}>${v}</option>`).join('')}</select></label></div>
  ${b.shelf==='finished'?`<div class="fld"><label>Rating style<select data-f="method"><option value=""${!b.method?' selected':''}>Auto (${isRom(b)?'chili peppers for romance':'stars'})</option><option value="stars"${b.method==='stars'?' selected':''}>Stars</option><option value="chili"${b.method==='chili'?' selected':''}>Chili peppers</option></select></label></div>${raterBlock(b,'overall','Overall')}<details class="rank"><summary>Rank the details</summary>${CATS.map(([c,l])=>raterBlock(b,c,l)).join('')}</details>`:''}
  ${b.shelf!=='want'?`<div class="dates">${b.shelf!=='want'?`<div class="fld"><label>Started on<input type="date" data-f="started" value="${b.started||''}" max="${TODAY}"></label></div>`:''}${b.shelf==='finished'?`<div class="fld"><label>Finished on<input type="date" data-f="fin" value="${b.fin||''}" max="${TODAY}"></label></div>`:''}</div>`:''}
- ${b.shelf==='reading'?(n?`<div class="fld"><label>Chapters finished <output>${b.cur} of ${n}</output><input type="range" min="0" max="${n}" step="1" value="${b.cur}" data-f="cur"></label></div>`:`<div class="fld"><label>Progress <output>${b.pr||0}%</output><input type="range" min="0" max="100" step="1" value="${b.pr||0}" data-f="pr"></label></div>`):''}
+ ${b.shelf==='reading'?`<div class="fld"><span class="lbl2">Track progress by</span><div class="seg" role="group" aria-label="Track progress by"><button type="button" class="${pgMode()?'':'on'}" data-act="track" data-v="chapters" aria-pressed="${!pgMode()}">Chapters</button><button type="button" class="${pgMode()?'on':''}" data-act="track" data-v="pages" aria-pressed="${pgMode()}">Pages</button></div></div>`+(pgMode()?(b.pages?`<div class="fld"><label>Current page <output>${b.pg||0} of ${b.pages}</output><input type="range" min="0" max="${b.pages}" step="1" value="${b.pg||0}" data-f="pg"></label><label class="pgnum">Or type it <input type="number" inputmode="numeric" min="0" max="${b.pages}" value="${b.pg||0}" data-f="pgn"></label><p class="hint" style="margin:6px 0 0">${progress(b)}% read${n?' · about chapter '+Math.min(n,(b.cur||0)+1)+' of '+n:''}</p></div>`:`<div class="fld"><label>Total pages<input type="number" inputmode="numeric" min="1" max="20000" placeholder="e.g. 320" data-f="pages"></label><p class="hint" style="margin:6px 0 0">Add the page count to track by page.</p></div>`):(n?`<div class="fld"><label>Chapters finished <output>${b.cur} of ${n}</output><input type="range" min="0" max="${n}" step="1" value="${b.cur}" data-f="cur"></label>${b.pages?`<p class="hint" style="margin:6px 0 0">About page ${b.pg||0} of ${b.pages} · ${progress(b)}% read</p>`:''}</div>`:`<div class="fld"><label>Progress <output>${b.pr||0}%</output><input type="range" min="0" max="100" step="1" value="${b.pr||0}" data-f="pr"></label></div>`)):''}
  ${S.custom.length?`<div class="fld"><span class="lab">Custom shelves</span><div class="chips" style="margin:6px 0 0">${S.custom.map(c=>`<label class="chip chk"><input type="checkbox" data-f="custom" data-name="${esc(c)}"${b.custom.includes(c)?' checked':''}> ${esc(c)}</label>`).join('')}</div></div>`:''}
  <div class="fld notes"><span class="lab">Notes <small>${b.notes.length?b.notes.length+' in the order you added them':''}</small></span>${notesHTML(b)}<textarea id="newnote" rows="2" placeholder="Quotes, thoughts, where you stopped"></textarea><button class="btn" type="button" data-act="addnote" data-id="${esc(b.id)}">Add note</button></div>
  <div class="acts"><button class="btn pri" data-act="close-dlg">Done</button>${cloud.user&&accepted().length?`<button class="btn" data-act="recfriend" data-id="${esc(b.id)}">Recommend to a friend</button>`:''}<button class="btn danger" data-act="remove" data-id="${esc(b.id)}">Remove</button></div></div></div>`;
  if(!bd.open)bd.showModal();lazy(bd);if(focusNote)$('#newnote',bd).focus()}
-bd.addEventListener('input',e=>{if(e.target.type==='range'){const o=$('output',e.target.closest('label'));const f=e.target.dataset.f,v=e.target.value;if(o)o.textContent=f==='pr'?v+'%':v+' of '+bk(bd.dataset.id).chapters.length}});
+bd.addEventListener('input',e=>{if(e.target.type==='range'){const o=$('output',e.target.closest('label'));const f=e.target.dataset.f,v=e.target.value;if(o)o.textContent=f==='pr'?v+'%':f==='pg'?v+' of '+bk(bd.dataset.id).pages:v+' of '+bk(bd.dataset.id).chapters.length}});
 bd.addEventListener('change',e=>{const b=bk(bd.dataset.id),f=e.target.dataset.f;if(!b||!f)return;const v=e.target.value;
  if(f==='shelf'){setShelf(b,v);openBook(b.id)}
  else if(f==='method'){b.method=v;save();openBook(b.id)}
  else if(f==='started'){b.started=v||null;save()}
  else if(f==='fin'){b.fin=v||null;save()}
- else if(f==='cur'){b.cur=+v;save()}
+ else if(f==='cur'){setCh(b,v);save();setTimeout(()=>openBook(b.id),0)}
  else if(f==='pr'){b.pr=+v;save()}
+ else if(f==='pg'||f==='pgn'){setPg(b,v);save();setTimeout(()=>openBook(b.id),0)}
+ else if(f==='pages'){const n=Math.round(+v);if(n>0){b.pages=n;b.pg=Math.round((b.pr||0)*n/100);save();setTimeout(()=>openBook(b.id),0)}}
  else if(f==='custom'){const n=e.target.dataset.name;b.custom=e.target.checked?[...new Set([...b.custom,n])]:b.custom.filter(x=>x!==n);save()}});
 bd.addEventListener('close',()=>{render()});
 dq.addEventListener('close',()=>{render()});
@@ -1509,7 +1524,9 @@ document.addEventListener('click',e=>{
  else if(a==='delnote'&&b){const ni=b.notes.findIndex(n=>n.id===el.dataset.n),nn=b.notes[ni];b.notes=b.notes.filter(n=>n.id!==el.dataset.n);save();openBook(id);
   if(nn)toast('Note removed',()=>{const bb=bk(id);if(!bb)return;bb.notes.splice(Math.min(ni,bb.notes.length),0,nn);save();if(bd.open)openBook(id)})}
  else if(a==='scroll'){const t=el.closest('.rail').querySelector('.track');t.scrollBy({left:t.clientWidth*.8*(+el.dataset.d)})}
- else if(a==='nextch'&&b){if(b.cur<b.chapters.length){b.cur++;save();toast('Now on chapter '+Math.min(b.cur+1,b.chapters.length));render()}}
+ else if(a==='track'){S.track=el.dataset.v==='pages'?'pages':'chapters';save();if(bd.open&&bd.dataset.id)openBook(bd.dataset.id);else render()}
+ else if(a==='setpg'&&b){const i=el.closest('.pgform').querySelector('input');setPg(b,i.value);save();toast('Saved page '+(b.pg||0));render()}
+ else if(a==='nextch'&&b){if(b.cur<b.chapters.length){setCh(b,b.cur+1);save();toast('Now on chapter '+Math.min(b.cur+1,b.chapters.length));render()}}
  else if(a==='finish'&&b){setShelf(b,'finished');render();openBook(id);toast('Marked as finished. Add a rating.')}
  else if(a==='openq'){QR=topPicks();qi=0;renderQ();dq.showModal()}
  else if(a==='remove'){const ob=bk(id),oi=S.books.indexOf(ob);S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed '+(ob?ob.t:'book'),()=>{if(ob&&!bk(id)){S.books.splice(Math.min(oi,S.books.length),0,ob);save();render()}});render()}
@@ -1722,6 +1739,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
  const RELEASES=[
  {id:'2026-11-27',date:'November 27, 2026',title:'A fresh new look',items:[
   ['New','A new welcome page that explains what Readers is for: tracking your reading and starting book clubs without spoilers.'],
+  ['New','Track progress by chapters or by page. Switch any time in a book\'s details. Both keep your percentage up to date, and page numbers are the most exact.'],
   ['New','On computers, navigation is now a clean sidebar that matches the phone tab bar. The bookshelf is retired.'],
   ['New','Share a club invite straight to your friends. Pick everyone or just the ones you choose, and they can join from Home or Clubs in one tap.'],
   ['New','A notification bell shows friend requests, club invites, book recommendations and club activity in one place. Choose what you want to see in Profile, under Notifications.'],
