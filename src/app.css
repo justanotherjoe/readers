@@ -334,4 +334,8 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .empt .drow span{color:var(--page-sub);font-size:13px}
 .empt .drow.mut{color:var(--page-sub)}
 .empt .drow.mut b{font-weight:600}
+
+button.cv2.tapc{border:0;padding:0;cursor:pointer;position:relative;font:inherit;color:inherit}
+button.cv2.tapc::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .12s}
+button.cv2.tapc:hover::after,button.cv2.tapc:focus-visible::after{box-shadow:inset 0 0 0 2px var(--page-orange)}
 </style>

@@ -926,6 +926,10 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .empt .drow span{color:var(--page-sub);font-size:13px}
 .empt .drow.mut{color:var(--page-sub)}
 .empt .drow.mut b{font-weight:600}
+
+button.cv2.tapc{border:0;padding:0;cursor:pointer;position:relative;font:inherit;color:inherit}
+button.cv2.tapc::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .12s}
+button.cv2.tapc:hover::after,button.cv2.tapc:focus-visible::after{box-shadow:inset 0 0 0 2px var(--page-orange)}
 </style>
 </head>
 <body data-theme="light">
@@ -1187,6 +1191,28 @@ const jobs=[];let active=0;
 function limit(fn){return new Promise((res,rej)=>{jobs.push({fn,res,rej});pump()})}
 function pump(){while(active<4&&jobs.length){const j=jobs.shift();active++;j.fn().then(j.res,j.rej).finally(()=>{active--;pump()})}}
 const inflight=new Map();
+const descs=store.get('readers.descs',{});let dsT;const saveDescs=()=>{clearTimeout(dsT);dsT=setTimeout(()=>store.set('readers.descs',descs),500)};
+const dflight=new Map();
+const tidy=d=>String(d||'').replace(/<[^>]*>/g,' ').replace(/\[[^\]]*\]\([^)]*\)/g,'').replace(/\s+/g,' ').trim().slice(0,700);
+function findDesc(t,a){const k=key(t,a);if(k in descs)return Promise.resolve(descs[k]||'');if(dflight.has(k))return dflight.get(k);
+ const p=limit(async()=>{let d='',err=false;
+  try{const r=await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=1&q='+encodeURIComponent('intitle:'+t+' inauthor:'+a));const j=await r.json();d=tidy(j.items&&j.items[0]&&j.items[0].volumeInfo&&j.items[0].volumeInfo.description)}catch(e){err=true}
+  if(!d){try{const r=await fetch('https://openlibrary.org/search.json?title='+encodeURIComponent(t)+'&author='+encodeURIComponent(a)+'&limit=1&fields=key');const j=await r.json();const wk=j.docs&&j.docs[0]&&j.docs[0].key;
+   if(wk){const w=await fetch('https://openlibrary.org'+wk+'.json').then(x=>x.json());d=tidy(typeof w.description==='string'?w.description:(w.description&&w.description.value)||'')}err=false}catch(e){err=true}}
+  if(d||!err){descs[k]=d;saveDescs()}dflight.delete(k);return d});
+ dflight.set(k,p);return p}
+function bookPreview(id){const c=CATID[id];if(!c)return;
+ const on=S.books.find(b=>b.id===id);
+ bd.dataset.id='';
+ bd.innerHTML=`<div class="dq"><div class="big" id="pvbig" style="background-color:${col(c)};background-size:cover;background-position:center"></div><div><h4>${esc(c.t)}</h4><div class="sub">${esc(c.a)}</div><p class="hint" style="margin:6px 0 0">${[c.pages?c.pages+' pages':'',(c.tags||[]).slice(0,3).join(' · ')].filter(Boolean).join(' · ')}</p><p class="pvdesc hint" id="pvdesc" style="margin:12px 0;line-height:1.5">Loading description…</p>${on?`<p class="hint" style="margin:0 0 10px">Already on your shelf.</p><div class="acts"><button class="btn" data-act="close-dlg">Back</button></div>`:`<div class="fld"><label>Add to<select id="pvshelf">${shelfOpts()}</select></label></div><div class="acts"><button class="btn pri" data-act="recadd" data-id="${esc(c.id)}">Add to shelf</button><button class="btn" data-act="close-dlg">Back</button></div>`}</div></div>`;
+ if(!bd.open)bd.showModal();
+ findCover(c.t,c.a).then(u=>{const el=$('#pvbig');if(u&&el&&bd.open)el.style.backgroundImage='url('+u.replace('-M.jpg','-L.jpg').replace('zoom=1','zoom=2')+')'}).catch(()=>{});
+ findDesc(c.t,c.a).then(d=>{const el=$('#pvdesc');if(el&&bd.open)el.textContent=d||'No description available for this one yet.'}).catch(()=>{const el=$('#pvdesc');if(el&&bd.open)el.textContent='No description available for this one yet.'})}
+function recAdd(btn){const c=CATID[btn.dataset.id];if(!c)return;const val=$('#pvshelf').value;
+ const b=addBook(c,val.startsWith('c:')?'want':val);
+ if(val.startsWith('c:'))place(b,val);else if(b.shelf!==val)setShelf(b,val);
+ bd.close();toast('Added '+c.t);refreshRails();render()}
+
 function findCover(t,a){const k=key(t,a);if(k in covers)return Promise.resolve(covers[k]||null);if(inflight.has(k))return inflight.get(k);
  const p=limit(async()=>{let url=null,err=false;
   try{const r=await fetch('https://openlibrary.org/search.json?title='+encodeURIComponent(t)+'&author='+encodeURIComponent(a)+'&limit=1&fields=cover_i');const j=await r.json();if(j.docs&&j.docs[0]&&j.docs[0].cover_i)url='https://covers.openlibrary.org/b/id/'+j.docs[0].cover_i+'-M.jpg'}catch(e){err=true}
@@ -1285,7 +1311,7 @@ function coverBtn(b){const p=progress(b),k=method(b);
 function rail(name,count,books,extra=''){const shut=!!(S.fold||{})[name];
  return `<section class="row${shut?' shut':''}"><h3><button type="button" class="fold" data-act="fold" data-k="${esc(name)}" aria-expanded="${!shut}"><svg class="chv" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>${esc(name)}</span> <small>${count}</small></button>${extra}</h3>`+(shut?'':`<div class="rail"><button class="arrow l" aria-label="Scroll left" data-act="scroll" data-d="-1">‹</button><div class="track">${books.length?books.map(coverBtn).join(''):'<p class="hint">Nothing here yet.</p>'}</div><button class="arrow r" aria-label="Scroll right" data-act="scroll" data-d="1">›</button></div>`)+`</section>`}
 const nb=n=>n+(n===1?' book':' books');
-function recCard(r,actions=true){const c=r.c;return `<article class="rc"><div class="cv2" ${cvAttrs(c)} style="background-color:${col(c)}"></div><div><h4>${esc(c.t)}</h4><div class="sub">${esc(c.a)} · ${c.pages} pages</div><div class="why">${r.why}</div><div class="tags">${c.tags.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${actions?`<div class="acts"><button class="btn pri" data-act="rec-want" data-id="${esc(c.id)}">Want to Read</button><button class="btn" data-act="rec-no" data-id="${esc(c.id)}">Not for me</button></div>`:''}</div></article>`}
+function recCard(r,actions=true){const c=r.c;return `<article class="rc"><button type="button" class="cv2 tapc" ${cvAttrs(c)} style="background-color:${col(c)}" data-act="prev" data-id="${esc(c.id)}" aria-label="About ${esc(c.t)}"></button><div><h4>${esc(c.t)}</h4><div class="sub">${esc(c.a)} · ${c.pages} pages</div><div class="why">${r.why}</div><div class="tags">${c.tags.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${actions?`<div class="acts"><button class="btn pri" data-act="rec-want" data-id="${esc(c.id)}">Want to Read</button><button class="btn" data-act="rec-no" data-id="${esc(c.id)}">Not for me</button></div>`:''}</div></article>`}
 const meter=(n,of)=>`<div class="meter"><div class="bar"><i style="width:${Math.min(100,n/of*100)}%"></i></div><small>${n} of ${of} books logged</small></div>`;
 
 /* ---------- HOME ---------- */
@@ -1552,6 +1578,8 @@ document.addEventListener('click',e=>{
  else if(a==='sprev')searchPreview(+el.dataset.i);
  else if(a==='sadd2')searchAdd2(el);
  else if(a==='mood'){dm=el.dataset.m;render()}
+ else if(a==='prev'){bookPreview(id)}
+ else if(a==='recadd'){recAdd(el)}
  else if(a==='rec-want'){const c=CATID[id];addBook(c,'want');(c.tags||[]).forEach(t=>S.liked[t]=(S.liked[t]||0)+1);save();toast('Added '+c.t+' to Want to Read');render()}
  else if(a==='rec-no'){const c=CATID[id];S.dismissed.push(id);if(c)c.tags.forEach(t=>S.nope[t]=(S.nope[t]||0)+1);save();toast('Got it. You will see fewer picks like that.',()=>{S.dismissed=S.dismissed.filter(x=>x!==id);if(c)c.tags.forEach(t=>{S.nope[t]=Math.max(0,(S.nope[t]||0)-1)});save();render()});render()}
  else if(a==='copyf'){try{navigator.clipboard.writeText(cloud.fcode);toast('Friend code copied')}catch(x){toast('Code: '+cloud.fcode)}}
