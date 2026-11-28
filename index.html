@@ -1923,4 +1923,9 @@ function notifCard(){if(!cloud.user)return '';const N=S.notif,row=(k,l,d)=>`<lab
 /* ---------- theme ---------- */
 function theme(k){const T=THEMES.find(x=>x.k===k)||THEMES[0];document.body.dataset.theme=T.t;document.body.dataset.skin=T.s;document.body.dataset.tk=T.k;logo.src=T.t==='dark'?D:L;store.set('readers.theme',T.k)}
 theme(store.get('readers.theme',matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+
+/* ---------- first paint: the cloud path renders from onSession, every other path renders here ---------- */
+/* Without this the page stays blank whenever window.supabase never arrives: offline, a blocked CDN, or an ad blocker. */
+if(!cloud.on)render();
+setTimeout(()=>{if(!main.innerHTML)render()},3000);
 </script></body></html>
