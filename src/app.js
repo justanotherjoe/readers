@@ -211,7 +211,7 @@ function seed(){
 }
 let S=store.get('readers.v1',null);
 if(!S||!Array.isArray(S.books))S=cloud.on?blank():seed();
-function normalize(){S.onbHide=!!S.onbHide;S.fold=S.fold||{};S.track=S.track==='pages'?'pages':'chapters';S.order=Array.isArray(S.order)?S.order:[];S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
+function normalize(){S.onbHide=!!S.onbHide;S.fold=S.fold||{};S.track=S.track==='pages'?'pages':'chapters';S.home=Object.assign({d:'compact',off:{},ord:[]},S.home||{});if(!['roomy','compact','lines'].includes(S.home.d))S.home.d='compact';S.home.off=S.home.off||{};S.home.ord=Array.isArray(S.home.ord)?S.home.ord:[];S.order=Array.isArray(S.order)?S.order:[];S.notif=Object.assign({friends:true,invites:true,recs:true,club:true},S.notif||{});S.nseen=S.nseen||[];S.liked=S.liked||{};S.nope=S.nope||{};S.custom=S.custom||[];S.dismissed=S.dismissed||[];S.clubs=S.clubs||[];S.profile=S.profile||{name:'Reader',since:YEAR,vis:'friends',priv:{}};S.goal=S.goal||24;S.sort=S.sort||'recent';
  S.books.forEach(b=>{b.tags=b.tags||[];b.custom=b.custom||[];if(!Array.isArray(b.notes)){b.notes=b.note?[{id:'n'+Date.now()+Math.random().toString(36).slice(2,5),t:b.note,ts:new Date().toISOString()}]:[]}delete b.note;b.cats=b.cats||{};b.method=b.method||'';if(b.started===undefined)b.started=null})}
 normalize();
 let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>store.set('readers.v1',S),150);cloudSoon()};
@@ -340,7 +340,7 @@ function why(c,b,sh){
 /* ---------- navigation ---------- */
 const main=$('#main'),logo=$('#logo'),tg=$('#tg'),dq=$('#dq'),bd=$('#bd'),fm=$('#fm');
 let page='home';
-const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile(),notes:()=>vNotes(),friends:()=>vFriends()};
+const VIEWS={home:()=>vHome(),shelf:()=>vShelf(),discover:()=>vDiscover(),clubs:()=>vClubs(),stats:()=>vStats(),profile:()=>vProfile(),notes:()=>vNotes(),friends:()=>vFriends(),custom:vCustom};
 const WIDE={shelf:1,discover:1,clubs:1,stats:1};
 function render(){renderAcct();document.body.dataset.new=hasNew()&&page!=='notes'?'1':'';document.body.dataset.freq=S.notif.friends&&(cloud.friends||[]).some(f=>f.status==='pending'&&f.incoming)?'1':'';refreshNotif();document.body.dataset.recs=onShelf('finished').length<GOAL_UNLOCK?'locked':'open';main.className=WIDE[page]?'wide':'home';const g=gate();document.body.dataset.gate=g?'1':'';const gs=(!g&&page!=='shelf'&&page!=='profile')?`<div class="search${WIDE[page]?'':' flat'}"><input id="q" type="search" placeholder="Search any book or author" autocomplete="off" aria-label="Search books"><div class="results" id="results"></div></div>`:'';main.innerHTML='<div class="page">'+gs+(g||VIEWS[page]())+'</div>';lazy(main);if(!g&&page!=='profile')wireSearch();if(page==='shelf'){shelfEdit=false;syncFoldAll()}}
 const phone=()=>matchMedia('(max-width:700px),(hover:none) and (max-width:900px)').matches;
@@ -365,20 +365,55 @@ function recCard(r,actions=true){const c=r.c;return `<article class="rc"><button
 const meter=(n,of)=>`<div class="meter"><div class="bar"><i style="width:${Math.min(100,n/of*100)}%"></i></div><small>${n} of ${of} books logged</small></div>`;
 
 /* ---------- HOME ---------- */
-function vHome(){
- const rd=onShelf('reading'),r=rd.find(b=>b.chapters)||rd[0];let hero;
- if(r){const n=r.chapters&&r.chapters.length,c=r.cur;
-  hero=`<section class="now"><div class="cv" ${cvAttrs(r)}></div><div><div class="lbl">Currently reading</div><h2>${esc(r.t)}</h2><p class="by">${esc(r.a)}</p>`+
-  (pgMode()&&r.pages?`<div class="chap">Page ${r.pg||0} of ${r.pages}<small>${progress(r)}% read${n&&c<n?' · chapter '+(c+1)+' of '+n:''}</small></div><div class="bar" style="max-width:420px;margin:12px 0"><i style="width:${progress(r)}%;background:var(--page-orange);display:block;height:100%"></i></div><div class="pgform"><label>Now on page <input type="number" inputmode="numeric" min="0" max="${r.pages}" value="${r.pg||0}" aria-label="Current page"></label><button class="btn pri" data-act="setpg" data-id="${esc(r.id)}">Update page</button></div>`:n?`<div class="chap">${c<n?'Chapter '+(c+1)+' of '+n:'All '+n+' chapters read'}<small>${c<n?esc(r.chapters[c]):'Ready to mark as finished'}</small></div><div class="ticks" aria-hidden="true">${r.chapters.map((_,i)=>`<span class="${i<c?'done':i===c?'cur':''}" title="${esc(r.chapters[i])}"></span>`).join('')}</div>`
+const HBLK=[['now','Currently reading','Pinned to the top'],['goal','Reading goal','Your books-per-year bar'],['recs','Picked for you','Your recommendations'],['clubs','Your clubs','Where everyone is in the book'],['invites','Club invites','Only shows when you have one'],['act','Friend activity','What friends have been reading'],['check','Setup checklist','Hides itself once finished']];
+const MAINB=['now','goal','recs'];
+const hOrd=()=>{const all=HBLK.map(x=>x[0]),u=S.home.ord.filter(k=>all.includes(k));return u.concat(all.filter(k=>!u.includes(k)))};
+const hOn=k=>k==='now'||!S.home.off[k];
+function heroCmp(r){const n=r.chapters&&r.chapters.length,c=r.cur,line=S.home.d==='lines';
+ const ticks=n&&!line?`<div class="ticks sm">${r.chapters.map((_,i)=>`<span class="${i<c?'done':i===c?'cur':''}"></span>`).join('')}</div>`
+  :`<div class="bar sm"><i style="width:${progress(r)}%"></i></div>`;
+ const sub=pgMode()&&r.pages?`Page ${r.pg||0} of ${r.pages}`:n?`Chapter ${Math.min(c+1,n)} of ${n}`:`${progress(r)}% read`;
+ const act=pgMode()&&r.pages?(r.pg>=r.pages?['finish','Mark as finished']:null):n&&c<n?['nextch','Finished chapter']:['finish','Mark as finished'];
+ return `<section class="now cmp${line?' line':''}"><div class="cv" ${cvAttrs(r)}></div><div class="nb"><div class="lbl">Currently reading</div><h2>${esc(r.t)}</h2><p class="by">${esc(r.a)} · ${sub}</p>${ticks}<div class="cact">${act?`<button class="btn pri" data-act="${act[0]}" data-id="${esc(r.id)}">${esc(act[1])}</button>`:''}<button class="btn mor" data-act="book" data-id="${esc(r.id)}" aria-label="More for ${esc(r.t)}">\u22ef</button></div></div></section>`}
+function heroRoomy(r){const n=r.chapters&&r.chapters.length,c=r.cur;
+ return `<section class="now"><div class="cv" ${cvAttrs(r)}></div><div><div class="lbl">Currently reading</div><h2>${esc(r.t)}</h2><p class="by">${esc(r.a)}</p>`+
+  (pgMode()&&r.pages?`<div class="chap">Page ${r.pg||0} of ${r.pages}<small>${progress(r)}% read${n&&c<n?' · chapter '+(c+1)+' of '+n:''}</small></div><div class="bar" style="max-width:420px;margin:12px 0"><i style="width:${progress(r)}%;background:var(--page-orange);display:block;height:100%"></i></div><div class="pgform"><label>Now on page <input type="number" inputmode="numeric" min="0" max="${r.pages}" value="${r.pg||0}" aria-label="Current page"></label><button class="btn pri" data-act="setpg" data-id="${esc(r.id)}">Update page</button></div>`
+   :n?`<div class="chap">${c<n?'Chapter '+(c+1)+' of '+n:'Ready to mark as finished'}${r.chapters[c]?'<small>'+esc(r.chapters[c])+'</small>':''}</div><div class="ticks">${r.chapters.map((_,i)=>`<span class="${i<c?'done':i===c?'cur':''}"></span>`).join('')}</div>`
    :`<div class="chap">${progress(r)}% read</div><div class="bar" style="max-width:420px;margin:12px 0"><i style="width:${progress(r)}%;background:var(--page-orange);display:block;height:100%"></i></div>`)+
-  `<div class="btnrow">${pgMode()&&r.pages?(r.pg>=r.pages?`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`:''):n&&c<n?`<button class="btn pri" data-act="nextch" data-id="${esc(r.id)}">Finished this chapter</button>`:`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`}<button class="btn" data-act="note" data-id="${esc(r.id)}">Add a note</button><button class="btn" data-act="book" data-id="${esc(r.id)}">Details</button></div>${rd.length>1?`<p class="also">Also reading: ${rd.filter(x=>x!==r).map(x=>`<button class="lnk" data-act="book" data-id="${esc(x.id)}">${esc(x.t)} (${progress(x)}%)</button>`).join(', ')}</p>`:''}</div></section>`}
- else hero=`<section class="card"><h3 style="margin:0 0 6px;font:700 22px Space Grotesk,system-ui,sans-serif">Nothing in progress</h3><p style="margin:0 0 14px">Pick something from Want to Read and start a new chapter.</p><button class="btn pri" data-go="shelf">Open My Shelf</button></section>`;
+  `<div class="btnrow">${pgMode()&&r.pages?(r.pg>=r.pages?`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`:''):n&&c<n?`<button class="btn pri" data-act="nextch" data-id="${esc(r.id)}">Finished this chapter</button>`:`<button class="btn pri" data-act="finish" data-id="${esc(r.id)}">Mark as finished</button>`}<button class="btn" data-act="note" data-id="${esc(r.id)}">Add a note</button><button class="btn" data-act="book" data-id="${esc(r.id)}">Details</button></div></div></section>`}
+function alsoRows(rest){if(!rest.length)return '';
+ return `<div class="alsor">${rest.slice(0,3).map(b=>`<button type="button" class="alr" data-act="book" data-id="${esc(b.id)}"><span class="cv3" ${cvAttrs(b)} style="background-color:${col(b)}"></span><span class="alt"><b>${esc(b.t)}</b><small>${progress(b)}% · also reading</small></span><span class="chev" aria-hidden="true">\u203a</span></button>`).join('')}</div>`}
+function clubsStrip(){const cs=CLS();if(!cs.length)return '';
+ return `<div class="cstrip">${cs.slice(0,3).map(c=>{const b=bk(c.bookId),n=b&&b.chapters?b.chapters.length:0;return `<button type="button" class="alr" data-act="goclub" data-id="${esc(c.id)}"><span class="cbar"></span><span class="alt"><b>${esc(c.name)}</b><small>${b?esc(b.t):''}${n?' · chapter '+Math.min((b.cur||0)+1,n)+' of '+n:''}</small></span><span class="chev" aria-hidden="true">\u203a</span></button>`}).join('')}</div>`}
+function vCustom(){const ord=hOrd();
+ const seg=['roomy','Roomy','compact','Compact','lines','Lines'];
+ return `<div class="inner"><button class="lnk" data-go="profile" style="margin-bottom:10px">\u2190 Profile</button>
+ <h2 class="pt">Customize Home</h2><p class="hint" style="margin:0 0 18px">Move things up or down, and turn off what you never look at.</p>
+ <section class="card sec"><h3 class="ct">Card size</h3><div class="seg" role="group" aria-label="Card size">${[0,2,4].map(i=>`<button type="button" class="${S.home.d===seg[i]?'on':''}" data-act="hd" data-v="${seg[i]}" aria-pressed="${S.home.d===seg[i]}">${seg[i+1]}</button>`).join('')}</div>
+ <p class="hint" style="margin:10px 0 0">${S.home.d==='roomy'?'Big cover, every button on show.':S.home.d==='compact'?'A third of the height, with the main action kept.':'One line per book. Most on screen, least to look at.'}</p></section>
+ <section class="card sec"><h3 class="ct">What Home shows</h3><ul class="hlist">${ord.map((k,i)=>{const m=HBLK.find(x=>x[0]===k),on=hOn(k),fix=k==='now';
+  return `<li class="${on?'':'off'}"><span class="hm"><b>${esc(m[1])}</b><small>${fix?'Pinned to the top':esc(m[2])}</small></span>
+  <span class="hb"><button class="ar" data-act="hmv" data-k="${esc(k)}" data-d="-1" ${i===0?'disabled':''} aria-label="Move ${esc(m[1])} up">\u2191</button><button class="ar" data-act="hmv" data-k="${esc(k)}" data-d="1" ${i===ord.length-1?'disabled':''} aria-label="Move ${esc(m[1])} down">\u2193</button>
+  ${fix?'<span class="fixl">Always on</span>':`<button type="button" class="sw ${on?'on':''}" data-act="htg" data-k="${esc(k)}" role="switch" aria-checked="${on}" aria-label="Show ${esc(m[1])} on Home"><i></i></button>`}</span></li>`}).join('')}</ul>
+ <p class="hint" style="margin:12px 0 0">${cloud.user?'Saved to your account, so Home matches on every device.':'Saved on this device. Sign in to carry it across.'}</p></section>
+ <div class="btnrow"><button class="btn" data-act="hreset">Reset to default</button></div></div>`}
+function vHome(){
+ const rd=onShelf('reading'),r=rd.find(b=>b.chapters)||rd[0],rest=rd.filter(b=>b!==r);
+ const roomy=S.home.d==='roomy';
+ const hero=r?(roomy?heroRoomy(r):heroCmp(r))+alsoRows(rest)
+  :`<section class="card"><h3 style="margin:0 0 6px;font:700 22px Space Grotesk,system-ui,sans-serif">Nothing in progress</h3><p style="margin:0 0 14px">Pick something from Want to Read and start a new chapter.</p><button class="btn pri" data-go="shelf">Open My Shelf</button></section>`;
  const fy=finYear().length,done=onShelf('finished').length,recs=topPicks();
- const goal=`<section class="goalbar"><div><b>${fy} of ${S.goal}</b> books finished in ${YEAR}</div><div class="bar"><i style="width:${Math.min(100,fy/S.goal*100)}%;background:var(--page-green);display:block;height:100%"></i></div><button class="lnk" data-go="stats">See stats</button></section>`;
+ const goal=roomy?`<section class="goalbar"><div><b>${fy} of ${S.goal}</b> books finished in ${YEAR}</div><div class="bar"><i style="width:${Math.min(100,fy/S.goal*100)}%;background:var(--page-green);display:block;height:100%"></i></div><button class="lnk" data-go="stats">See stats</button></section>`:`<section class="goalbar slim"><div class="gt"><b>${fy} of ${S.goal}</b> in ${YEAR}</div><div class="bar"><i style="width:${Math.min(100,fy/S.goal*100)}%;background:var(--page-green);display:block;height:100%"></i></div><button class="lnk" data-go="stats">Stats</button></section>`;
  const LOCK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
- const rc=done<GOAL_UNLOCK?`<section class="recs locked"><div class="rl"><h3><span class="lk">${LOCK}</span>Recommendations unlock at ${GOAL_UNLOCK} books</h3><p>Readers learns your taste from the books you finish and rate. ${GOAL_UNLOCK-done===1?'Just 1 more to go.':(GOAL_UNLOCK-done)+' more to go.'} Nothing here is sponsored.</p>${meter(done,GOAL_UNLOCK).replace('books logged','finished books')}</div><div class="btnrow" style="margin:0"><button class="btn pri" data-go="shelf">Add books</button><button class="btn" data-go="profile">Import from Goodreads</button></div></section>`
- :`<section class="recs"><div><h3>Your recommendations are ready</h3><p>${Math.min(6,recs.length)} books picked from the ${done} you have finished. Go through them one at a time.</p></div><div style="display:flex;align-items:center;gap:18px"><div class="stack">${recs.slice(0,4).map(x=>`<div ${cvAttrs(x.c)}></div>`).join('')}</div><button class="btn pri" data-act="openq">See recommendations</button></div></section>`;
- return `<div class="hgrid"><div class="hmain">${hero}${goal}${rc}</div><aside class="hside">${invitesCard()}${checklist()}${nudgeCard()}${actCard()}</aside></div>`}
+ const rail=(!roomy&&done>=GOAL_UNLOCK&&recs.length)?`<section class="rrail"><div class="rh"><b>PICKED FOR YOU</b><button class="lnk" data-act="openq">See all</button></div><div class="rr">${recs.slice(0,6).map(x=>`<button type="button" class="ri" data-act="prev" data-id="${esc(x.c.id)}"><span class="cvr" ${cvAttrs(x.c)} style="background-color:${col(x.c)}"></span><b>${esc(x.c.t)}</b></button>`).join('')}</div></section>`:'';
+ const rc=rail||(done<GOAL_UNLOCK?`<section class="recs locked"><div class="rl"><h3><span class="lk">${LOCK}</span>Recommendations unlock at ${GOAL_UNLOCK} books</h3><p>Readers learns your taste from the books you finish and rate. ${GOAL_UNLOCK-done===1?'Just 1 more to go.':(GOAL_UNLOCK-done)+' more to go.'} Nothing here is sponsored.</p>${meter(done,GOAL_UNLOCK).replace('books logged','finished books')}</div><div class="btnrow" style="margin:0"><button class="btn pri" data-go="shelf">Add books</button></div></section>`
+ :`<section class="recs"><div><h3>Your recommendations are ready</h3><p>${Math.min(6,recs.length)} books picked from the ${done} you have finished. Go through them one at a time.</p></div><div style="display:flex;align-items:center;gap:18px"><div class="stack">${recs.slice(0,4).map(x=>`<div ${cvAttrs(x.c)}></div>`).join('')}</div><button class="btn pri" data-act="openq">See recommendations</button></div></section>`);
+ const B={now:hero,goal,recs:rc,clubs:clubsStrip(),invites:invitesCard(),check:checklist(),act:actCard()};
+ const ord=hOrd().filter(k=>hOn(k)&&B[k]);
+ const wrap=k=>`<div class="hblk" style="order:${ord.indexOf(k)}">${B[k]}</div>`;
+ const main=ord.filter(k=>MAINB.includes(k)).map(wrap).join('');
+ const side=ord.filter(k=>!MAINB.includes(k)).map(wrap).join('')+`<div class="hblk" style="order:99">${nudgeCard()}</div>`;
+ return `<div class="hgrid"><div class="hmain">${main}</div><aside class="hside">${side}</aside></div>`}
 let QR=[],qi=0;
 function renderQ(){
  if(qi>=QR.length){dq.innerHTML='<div class="dqend"><h4 style="font:700 26px Space Grotesk,system-ui,sans-serif;margin:0 0 8px">That is your queue for now</h4><p style="color:var(--page-sub)">Finish another book and Readers will build a new one.</p><button class="btn pri" data-act="close-dlg">Done</button></div>';return}
@@ -615,6 +650,12 @@ document.addEventListener('click',e=>{
  else if(a==='setpg'&&b){const i=el.closest('.pgform').querySelector('input');setPg(b,i.value);save();toast('Saved page '+(b.pg||0));render()}
  else if(a==='nextch'&&b){if(b.cur<b.chapters.length){setCh(b,b.cur+1);save();toast('Now on chapter '+Math.min(b.cur+1,b.chapters.length));render()}}
  else if(a==='finish'&&b){setShelf(b,'finished');render();openBook(id);toast('Marked as finished. Add a rating.')}
+ else if(a==='hd'){S.home.d=el.dataset.v;save();render()}
+ else if(a==='htg'){const k=el.dataset.k;if(k!=='now'){S.home.off[k]=!S.home.off[k];save();render()}}
+ else if(a==='hmv'){const k=el.dataset.k,d=+el.dataset.d,o=hOrd(),i=o.indexOf(k),j=i+d;
+  if(i>-1&&j>-1&&j<o.length){o.splice(j,0,o.splice(i,1)[0]);S.home.ord=o;save();render()}}
+ else if(a==='hreset'){S.home={d:'compact',off:{},ord:[]};save();toast('Home reset');render()}
+ else if(a==='goclub'){cid=el.dataset.id;cch=null;go('clubs')}
  else if(a==='openq'){QR=topPicks();qi=0;renderQ();dq.showModal()}
  else if(a==='remove'){const ob=bk(id),oi=S.books.indexOf(ob);S.books=S.books.filter(x=>x.id!==id);save();bd.close();toast('Removed '+(ob?ob.t:'book'),()=>{if(ob&&!bk(id)){S.books.splice(Math.min(oi,S.books.length),0,ob);save();render()}});render()}
  else if(a==='delshelf'){const n=el.dataset.k,c=S.books.filter(x=>x.custom.includes(n)).length;openForm('Delete shelf?',`<p style="margin:0">Delete <b>${esc(n)}</b>? ${c?'The '+(c===1?'1 book':c+' books')+' on it will stay in your library, they just will not be on this shelf.':'It has no books on it.'} This cannot be undone.</p>`,()=>{S.custom=S.custom.filter(x=>x!==n);S.books.forEach(x=>{x.custom=x.custom.filter(y=>y!==n)});delete S.fold[n];S.order=S.order.filter(x=>x!==n);if(S.profile.priv)delete S.profile.priv['c:'+n];save();render();toast('Deleted shelf '+n)},'Delete shelf')}
@@ -827,6 +868,12 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
 
 /* ---------- release notes ---------- */
  const RELEASES=[
+ {id:'2026-11-28',date:'November 28, 2026',title:'A smaller Home you arrange yourself',items:[
+  ['Improved','Cards on Home are a lot smaller. Your current book now takes about a third of the room it used to, so your goal, your picks and your clubs all fit on one screen.'],
+  ['New','Profile has a Customize Home page. Choose Roomy, Compact or Lines for the card size, move each section up or down, and switch off anything you never look at. Your current book stays pinned to the top.'],
+  ['New','Other books you are reading, and your clubs, now show as single tappable rows on Home.'],
+  ['Improved','Recommendations sit in a swipeable row of covers. Tap one to read what it is about.'],
+  ['Fixed','Home could come up blank if the page could not reach its script host, which also meant the app did not open offline. It now loads either way.']]},
  {id:'2026-11-27b',date:'November 27, 2026',title:'Know what a book is about',items:[
   ['New','Tap any cover on Discover to see what the book is about. You get the full cover, the page count, a short description and an Add to picker for any of your shelves. Thanks to the tester who asked for this one.'],
   ['Improved','The Clubs page now explains what a club is before you start one, and shows how chapter threads stay locked until you reach them.']]},
@@ -968,7 +1015,7 @@ function bellMenu(){if($('#notifmenu'))return closeNotif();closeMenu();
  const ids=(cloud.recs||[]).map(r=>r.id).filter(x=>!S.nseen.includes(x));if(ids.length){S.nseen=S.nseen.concat(ids).slice(-200);save()}}
 function refreshNotif(){const m=$('#notifmenu');if(m)m.innerHTML=notifHTML()}
 function notifCard(){if(!cloud.user)return '';const N=S.notif,row=(k,l,d)=>`<label class="pick"><input type="checkbox" data-p2="notif" data-k="${k}"${N[k]?' checked':''}><span>${l}<small class="hint" style="display:block;font-weight:400">${d}</small></span></label>`;
- return `<section class="card sec" id="notifset"><h3 class="ct">Notifications</h3><p class="hint" style="margin:0 0 6px">Choose what shows in the bell and on your Home page. Turning one off only hides it.</p>${row('friends','Friend requests','When someone wants to connect.')}${row('invites','Club invites','When a friend invites you to a club.')}${row('recs','Book recommendations','When a friend sends you a book.')}${row('club','Club activity','When friends are ahead of you in a club.')}</section>`}
+ return `<section class="card sec"><h3 class="ct">Home layout</h3><p class="hint" style="margin:0 0 10px">Choose the card size and what Home shows first.</p><button class="btn" data-go="custom">Customize Home</button></section><section class="card sec" id="notifset"><h3 class="ct">Notifications</h3><p class="hint" style="margin:0 0 6px">Choose what shows in the bell and on your Home page. Turning one off only hides it.</p>${row('friends','Friend requests','When someone wants to connect.')}${row('invites','Club invites','When a friend invites you to a club.')}${row('recs','Book recommendations','When a friend sends you a book.')}${row('club','Club activity','When friends are ahead of you in a club.')}</section>`}
 
 /* ---------- theme ---------- */
 function theme(k){const T=THEMES.find(x=>x.k===k)||THEMES[0];document.body.dataset.theme=T.t;document.body.dataset.skin=T.s;document.body.dataset.tk=T.k;logo.src=T.t==='dark'?D:L;store.set('readers.theme',T.k)}
