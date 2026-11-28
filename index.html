@@ -917,6 +917,15 @@ body[data-theme=dark] .land h2 em{color:var(--page-mint)}
 .pgform input{width:100px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:inherit;font:inherit}
 .delsh{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--page-orange,#c0431f);cursor:pointer}
 .delsh:hover,.delsh:focus-visible{background:color-mix(in srgb,var(--page-orange,#c0431f) 14%,transparent)}
+
+.empt .lead{margin:0 0 16px;font-size:15px;line-height:1.55;color:var(--page-text);max-width:52ch}
+.empt .demo{border:1px solid var(--line);border-radius:12px;padding:14px 15px;margin:0 0 16px;background:color-mix(in srgb,var(--page-bg) 70%,transparent)}
+.empt .dl{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--page-sub);margin-bottom:10px}
+.empt .ticks.ex{margin:0 0 12px}
+.empt .drow{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 0}
+.empt .drow span{color:var(--page-sub);font-size:13px}
+.empt .drow.mut{color:var(--page-sub)}
+.empt .drow.mut b{font-weight:600}
 </style>
 </head>
 <body data-theme="light">
@@ -1409,8 +1418,8 @@ function vDiscover(){const done=onShelf('finished').length;
 /* ---------- CLUBS ---------- */
 let cid=null,cch=null;
 function vClubs(){
- const head=`<div class="pagehead"><div><h2>Book clubs</h2><p>Discussion threads open as you reach each chapter, so there are no spoilers.</p></div><div class="btnrow" style="margin:0">${cloud.user?'<button class="btn" data-act="joinclub">Join with code</button>':''}<button class="btn pri" data-act="newclub">Start a club</button></div></div>${cloud.on&&!cloud.user?'<div class="card" style="margin-bottom:16px"><p style="margin:0 0 10px"><b>These are demo clubs.</b> Sign in to start real clubs and invite friends with a code.</p><button class="btn pri" data-act="signin">Sign in or sign up</button></div>':''}`;
- if(!CLS().length)return `<div class="inner">${head}${invitesCard()}<div class="card"><p style="margin:0">${cloud.user?'No clubs yet. Start one with a book you are reading or want to read, then share the invite code. Or join a friend\'s club with their code.':'No clubs yet. Start one with a book you are reading or want to read.'}</p></div></div>`;
+ const head=`<div class="pagehead"><div><h2>Book clubs</h2>${CLS().length?'<p>Discussion threads open as you reach each chapter, so there are no spoilers.</p>':''}</div>${CLS().length?`<div class="btnrow" style="margin:0">${cloud.user?'<button class="btn" data-act="joinclub">Join with code</button>':''}<button class="btn pri" data-act="newclub">Start a club</button></div>`:''}</div>${cloud.on&&!cloud.user?'<div class="card" style="margin-bottom:16px"><p style="margin:0 0 10px"><b>These are demo clubs.</b> Sign in to start real clubs and invite friends with a code.</p><button class="btn pri" data-act="signin">Sign in or sign up</button></div>':''}`;
+ if(!CLS().length)return `<div class="inner">${head}${invitesCard()}${clubsEmpty()}</div>`;
  const cl=CLS().find(c=>c.id===cid)||CLS()[0];if(cid!==cl.id){cid=cl.id;cch=null}
  const b=bk(cl.bookId);if(!b)return `<div class="inner">${head}${invitesCard()}<div class="card"><p>The book for this club is no longer in your library.</p><button class="btn danger" data-act="delclub" data-id="${cl.id}">Delete club</button></div></div>`;
  if(!b.chapters){b.chapters=genCh(12);b.cur=Math.round((b.pr||0)*12/100)}
@@ -1799,6 +1808,27 @@ function inviteDialog(d){const fr=accepted();if(!fr.length)return shareInvite(d)
    db.sendInvites(pick.map(f=>({from_user:cloud.user.id,to_user:f.other,from_name:S.profile.name||'A friend',club_name:d.name,book_title:d.book||'',code:d.code}))).then(()=>toast(pick.length===1?'Invite sent to '+pick[0].name:'Invite sent to '+pick.length+' friends')).catch(fail)},'Send invite')}
 async function joinInvite(id,code){try{const r=await db.join(code,S.profile.name);await db.dropInvite(id).catch(()=>{});cloud.invs=cloud.invs.filter(i=>i.id!==id);await loadClubs();cid=r.id;cch=null;page='clubs';$$('.book').forEach(x=>x.classList.toggle('active',x.dataset.p==='clubs'));render();toast('You joined '+r.name)}catch(e){fail(e)}}
 async function dropInv(id){try{await db.dropInvite(id);cloud.invs=cloud.invs.filter(i=>i.id!==id);render()}catch(e){fail(e)}}
+function clubsEmpty(){
+ const books=S.books.filter(b=>b.shelf==='reading'||b.shelf==='want').length;
+ const friends=cloud.user?(cloud.friends||[]).filter(f=>f.status==='accepted').length:0;
+ const demo=['Chapter 1','Chapter 2','Chapter 3','Chapter 4','Chapter 5','Chapter 6','Chapter 7','Chapter 8'];
+ const strip=`<div class="ticks ex" aria-hidden="true">${demo.map((_,i)=>`<span class="${i<3?'done':i===3?'cur':''}"></span>`).join('')}</div>`;
+ const lock=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`;
+ return `<section class="card empt">
+ <h3 class="ct">Read a book with someone</h3>
+ <p class="lead">A club is one book and a few people. Each chapter gets its own thread, and a thread stays shut until you have read that far. Nobody can spoil anything, and nobody has to keep pace.</p>
+ <div class="demo">
+  <div class="dl">What it looks like</div>
+  ${strip}
+  <div class="drow"><b>Chapter 4</b><span>open to you</span></div>
+  <div class="drow mut">${lock}<b>Chapter 5</b><span>opens when you get there</span></div>
+ </div>
+ ${books?`<div class="btnrow"><button class="btn pri" data-act="newclub">Start a club</button>${cloud.user?'<button class="btn" data-act="joinclub">Join with a code</button>':''}</div>`
+  :`<p class="hint" style="margin:0 0 12px">You need a book on your shelf first. Pick one you want to read.</p><div class="btnrow"><button class="btn pri" data-go="shelf">Open My Shelf</button>${cloud.user?'<button class="btn" data-act="joinclub">Join with a code</button>':''}</div>`}
+ ${!cloud.user?'<p class="hint" style="margin:12px 0 0">Sign in to read with other people. On your own, a club still tracks your chapters.</p>'
+  :friends?`<p class="hint" style="margin:12px 0 0">You can share the invite straight to your ${friends===1?'friend':friends+' friends'} once it exists.</p>`
+  :'<p class="hint" style="margin:12px 0 0">Starting one gives you a code to send to anybody. They do not need an account to be asked.</p>'}
+ </section>`}
 function invitesCard(){if(!cloud.user||!S.notif.invites)return '';const mine=new Set(cloud.clubs.map(c=>c.code)),list=(cloud.invs||[]).filter(i=>!mine.has(i.code));if(!list.length)return '';
  return `<section class="card sec"><h3 class="ct">Club invites</h3>${list.map(i=>`<div class="frow"><span class="fn"><span><b>${esc(i.from_name)}</b> invited you to <b>${esc(i.club_name)}</b>${i.book_title?` to read <i>${esc(i.book_title)}</i>`:''}</span></span><span class="fbt"><button class="btn pri" data-act="joininv" data-id="${esc(i.id)}" data-code="${esc(i.code)}">Join</button><button class="btn" data-act="dropinv" data-id="${esc(i.id)}">Dismiss</button></span></div>`).join('')}</section>`}
 async function shareInvite(d){const url=inviteURL(d.code),text='Join my book club "'+d.name+'" for '+d.book+' on Readers. Tap the link to join (code '+d.code+'):';

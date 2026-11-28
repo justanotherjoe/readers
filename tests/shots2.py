@@ -1,0 +1,20 @@
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+    pg=b.new_page(viewport={'width':1100,'height':900})
+    pg.goto('file:///home/claude/readers/Readers_Bookshelf_Nav8.html')
+    pg.evaluate("go('shelf')");pg.wait_for_timeout(500)
+    c=pg.locator('.cover[data-id^="people we meet"]').first
+    c.scroll_into_view_if_needed();c.hover();pg.wait_for_timeout(400)
+    box=c.bounding_box()
+    pg.screenshot(path='/home/claude/shots/n8_hover.png',clip={'x':max(0,box['x']-200),'y':max(0,box['y']-40),'width':520,'height':320})
+    c.click();pg.wait_for_timeout(400)
+    pg.locator('#bd details.rank summary').click()
+    pg.screenshot(path='/home/claude/shots/n8_dialog.png')
+    pg.close()
+    pg=b.new_page(viewport={'width':390,'height':844})
+    pg.goto('file:///home/claude/readers/Readers_Bookshelf_Nav8.html')
+    pg.evaluate("go('shelf')");pg.wait_for_timeout(500)
+    pg.locator('.cover[data-id^="dune"]').first.click();pg.wait_for_timeout(300)
+    pg.screenshot(path='/home/claude/shots/n8_mobile.png')
+    b.close()

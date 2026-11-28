@@ -1,0 +1,20 @@
+from playwright.sync_api import sync_playwright
+fake="window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:null}}),onAuthStateChange(){},signOut:async()=>{}}})}"
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
+    pg=b.new_context(viewport={'width':390,'height':844},device_scale_factor=2,is_mobile=True,has_touch=True).new_page()
+    errs=[];pg.on('pageerror',lambda e:errs.append(str(e)));pg.add_init_script(fake)
+    pg.goto('file:///tmp/test_local.html');pg.wait_for_timeout(500);pg.evaluate("go('shelf')");pg.wait_for_timeout(300)
+    h=lambda:pg.evaluate("[...document.querySelectorAll('#rails .row h3 .fold span, #rails .ord b')].map(x=>x.textContent)")
+    print('before',h())
+    pg.tap('#reorderbtn');pg.wait_for_timeout(200)
+    print('edit',h(),pg.inner_text('#reorderbtn'))
+    pg.screenshot(path='/home/claude/shots/ord.png')
+    pg.tap('.ord:nth-child(3) .mv[data-d="-1"]');pg.wait_for_timeout(200)
+    print('moved',h())
+    pg.tap('#reorderbtn');pg.wait_for_timeout(200)
+    print('view',h())
+    pg.reload();pg.wait_for_timeout(600);pg.evaluate("go('shelf')");pg.wait_for_timeout(300)
+    print('reload',h())
+    pg.tap('#reorderbtn');pg.tap('[data-act=resetorder]');pg.wait_for_timeout(200);print('reset',h())
+    print(errs);b.close()
